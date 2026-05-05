@@ -1,336 +1,535 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>OWP Time Zone</title>
+
+
 
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/60660814?s=280&v=4">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     
+
     <style>
+
         :root {
+
             --bg-dark: #06090f;
+
             --card-bg: #0d1117;
+
             --z-cyan: #00e5ff;
+
             --ct-gold: #ffcc00;
+
             --alert-red: #ff3333;
+
             --border: #30363d;
+
             --nws-blue: #003087;
+
         }
+
+
 
         * { box-sizing: border-box; }
-        
+
         body {
+
             margin: 0;
+
             font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+
             background: var(--bg-dark);
+
             color: white;
+
             display: flex;
+
             flex-direction: column;
+
             height: 100vh;
+
             overflow: hidden;
+
         }
 
-        /* --- HEADER --- */
+
+
         header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             background: white;
-            padding: 5px 25px;
+
+            padding: 5px 20px;
+
             border-bottom: 4px solid var(--nws-blue);
+
             height: 55px;
+
             flex-shrink: 0;
+
             z-index: 1000;
+
         }
-        .logos { display: flex; align-items: center; gap: 15px; }
-        .logos img { height: 32px; }
+
+        .logos { display: flex; align-items: center; gap: 12px; }
+
+        .logos img { height: 30px; }
+
         
-        .header-controls { display: flex; align-items: center; gap: 20px; }
-        #local-date-display { 
-            font-size: 1.4rem; 
-            font-weight: 900; 
-            color: var(--nws-blue); 
-            text-transform: uppercase; 
-        }
 
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--nws-blue);
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+
+        #local-date-display { font-size: 1.1rem; font-weight: 900; color: var(--nws-blue); text-transform: uppercase; }
+
+
+
+        .zoom-control { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.8rem; border-left: 1px solid #ddd; padding-left: 15px; }
+
+        .zoom-control input { width: 55px; border: 1.5px solid var(--nws-blue); border-radius: 4px; padding: 2px 5px; font-weight: bold; text-align: center; color: var(--nws-blue); }
+
+
+
+        .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.8rem; }
+
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 20px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px; width: 14px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--nws-blue); }
-        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- HERO CLOCKS --- */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 8px 10px;
-            flex-shrink: 0;
-        }
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            text-align: center;
-            border-top: 5px solid transparent;
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+
+        input:checked + .slider { background-color: var(--nws-blue); }
+
+        input:checked + .slider:before { transform: translateX(16px); }
+
+
+
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 10px; flex-shrink: 0; }
+
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; text-align: center; border-top: 4px solid transparent; }
+
         .z-card { border-top-color: var(--z-cyan); }
+
         .ct-card { border-top-color: var(--ct-gold); }
 
-        .big-time { font-size: 4.8rem; font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
-        .label-mini { font-size: 0.75rem; color: #8b949e; letter-spacing: 2px; font-weight: bold; margin-bottom: 2px; }
-        .abbr-text { font-size: 1rem; color: #ffffff; margin-left: 5px; opacity: 0.8; }
+        .big-time { font-size: 3.8rem; font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
+
+        .label-mini { font-size: 0.7rem; color: #8b949e; letter-spacing: 2px; font-weight: bold; margin-bottom: 2px; }
+
+
 
         .z-card .big-time { color: var(--z-cyan); }
+
         .ct-card .big-time { color: var(--ct-gold); }
 
-        /* --- MAP SECTION --- */
-        #map { flex-grow: 1; width: 100%; background: #0b0f14; }
-        
-        .leaflet-tooltip-custom {
-            background: rgba(0, 0, 0, 0.9) !important;
-            color: white !important;
-            border: 1.5px solid var(--z-cyan) !important;
-            font-weight: bold !important;
-            text-align: center;
-            border-radius: 4px;
-            padding: 3px 6px !important;
-            min-width: 85px;
-        }
-        .tooltip-name { font-size: 0.6rem; color: #8b949e; text-transform: uppercase; border-bottom: 1px solid #333; }
-        .tooltip-time { font-size: 1.1rem; font-family: monospace; color: white; margin-top: 2px; }
 
-        /* --- FOOTER TABS --- */
-        .footer {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 5px;
-            padding: 6px;
-            background: #080a0f;
-            flex-shrink: 0;
-        }
-        .tab {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 6px;
-            text-align: center;
+
+        /* --- TOOLTIP BOXES --- */
+
+        #map { flex-grow: 1; width: 100%; background: #0b0f14; }
+
+        .leaflet-tooltip-custom {
+
+            background: rgba(0, 0, 0, 0.95) !important;
+
+            color: #ffffff !important;
+
+            border: 1.5px solid var(--z-cyan) !important;
+
             border-radius: 5px;
+
+            padding: 2px 8px !important;
+
+            min-width: 100px;
+
+            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+
+            display: flex !important;
+
+            flex-direction: column !important;
+
+            align-items: center !important;
+
+            justify-content: center !important;
+
+            text-align: center !important;
+
+            opacity: 1 !important;
+
         }
-        .tab-name { font-size: 0.7rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
-        .tab-time { font-size: 1.4rem; font-weight: bold; font-family: monospace; margin: 1px 0; }
-        .tab-date { font-size: 0.8rem; font-weight: bold; color: var(--z-cyan); }
-        .tab-abbr { font-size: 0.65rem; color: #fff; opacity: 0.6; }
-        
+
+        .tooltip-name { 
+
+            font-size: 0.75rem;
+
+            color: #ffffff; 
+
+            text-transform: uppercase; 
+
+            border-bottom: 1px solid #444; 
+
+            padding-bottom: 1px;
+
+            margin-bottom: 2px;
+
+            font-weight: 800;
+
+            width: 100%;
+
+        }
+
+        .tooltip-time { 
+
+            font-size: 1.3rem;
+
+            font-family: monospace; 
+
+            font-weight: 900;
+
+            line-height: 1;
+
+        }
+
+
+
+        .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; padding: 6px; background: #080a0f; flex-shrink: 0; }
+
+        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 5px; text-align: center; border-radius: 5px; }
+
+        .tab-name { font-size: 0.65rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
+
+        .tab-time { font-size: 1.2rem; font-weight: bold; font-family: monospace; margin: 1px 0; }
+
+        .tab-date { font-size: 0.75rem; font-weight: bold; color: var(--z-cyan); }
+
         .diff-day { color: var(--alert-red) !important; }
+
     </style>
+
 </head>
+
+
 
 <body>
 
+
+
 <header>
+
     <div class="logos">
-        <img src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg" alt="NOAA">
-        <img src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg" alt="NWS">
-        <img src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png" alt="OWP/NWPS">
+
+        <img src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg">
+
+        <img src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg">
+
+        <img src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png">
+
     </div>
-    <div class="header-controls">
+
+    <div class="header-right">
+
         <div id="local-date-display">--</div>
-        <div class="toggle-container">
-            <span>12H</span>
-            <label class="switch">
-                <input type="checkbox" id="time-toggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span>24H</span>
+
+        
+
+        <div class="zoom-control">
+
+            <span>ZOOM</span>
+
+            <input type="number" id="zoom-input" step="0.3" value="3.2">
+
         </div>
+
+
+
+        <div class="toggle-container">
+
+            <span>12H</span>
+
+            <label class="switch"><input type="checkbox" id="time-toggle" checked><span class="slider"></span></label>
+
+            <span>24H</span>
+
+        </div>
+
     </div>
+
 </header>
 
-<div class="hero">
-    <div class="card z-card">
-        <div class="label-mini">ZULU TIME (<span id="z-abbr">UTC</span>)</div>
-        <div class="big-time" id="z-t">--:--:--</div>
-    </div>
 
-    <div class="card ct-card">
-        <div class="label-mini">CENTRAL TIME (<span id="ct-abbr">CT</span>)</div>
-        <div class="big-time" id="ct-t">--:--:--</div>
-    </div>
+
+<div class="hero">
+
+    <div class="card z-card"><div class="label-mini">ZULU TIME (UTC)</div><div class="big-time" id="z-t">--:--:--</div></div>
+
+    <div class="card ct-card"><div class="label-mini">CENTRAL TIME (CT)</div><div class="big-time" id="ct-t">--:--:--</div></div>
+
 </div>
+
+
 
 <div id="map"></div>
 
 <div class="footer" id="footer-container"></div>
 
+
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+
+
 <script>
-/* --- CONFIGURATION --- */
+
 let use24Hour = true;
+
 const toggle = document.getElementById('time-toggle');
-toggle.addEventListener('change', () => {
-    use24Hour = toggle.checked;
-    update();
-});
+
+toggle.addEventListener('change', () => { use24Hour = toggle.checked; update(); });
+
+
 
 const zones = {
-    z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam",
-    pago: "Pacific/Pago_Pago", hawaii: "Pacific/Honolulu", alaska: "America/Anchorage",
-    pacific: "America/Los_Angeles", mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico"
+
+    z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", 
+
+    hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", 
+
+    mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico"
+
 };
 
-const coords = {
-    guam: [13.44, 144.79],
-    pago: [5.0, 189.3], 
-    hawaii: [21.30, 202.15],
-    alaska: [61.21, 210.1],
-    pacific: [34.05, 241.76],
-    mt: [39.74, 255.01],
-    ct: [41.87, 272.38],
-    et: [40.71, 286.0],
-    pr: [18.22, 293.4]
+
+
+// FIXED COORDINATES - Centered on Landmasses
+
+const markerData = {
+
+    guam:    { pos: [13.44, -215.21] },
+
+    pago:    { pos: [-14.27, -170.70] },
+
+    hawaii:  { pos: [21.31, -159.86] },
+
+    alaska:  { pos: [58.21, -148.90] },
+
+    pacific: { pos: [34.00, -118.33] }, // Los Angeles
+
+    mt:      { pos: [39.84, -104.99] }, // Denver
+
+    ct:      { pos: [33.10, -87.56] },  // Tuscaloosa, AL
+
+    et:      { pos: [38.99, -77.03] },  // Washington D.C.
+
+    pr:      { pos: [18.22, -66.59] }   // Puerto Rico
+
 };
 
-/* --- MAP SETUP --- */
+
+
+// Map centered on US [38, -105] at Zoom 3.0
+
 const map = L.map('map', { 
-    zoomSnap: 0.01, 
-    zoomDelta: 0.05,
+
+    zoomSnap: 0.1, 
+
+    zoomDelta: 0.02, 
+
     scrollWheelZoom: false, 
+
     zoomControl: true, 
+
     minZoom: 2, 
-    worldCopyJump: false,
+
+    worldCopyJump: false, 
+
     attributionControl: false 
-}).setView([38.5, 216], 3.35);
+
+}).setView([27.6, -108], 3.34);
+
+
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// Time Zone lines
-for (let lon = -180; lon <= 540; lon += 15) {
-    L.polyline([[90, lon], [-90, lon]], { 
-        color: 'white', weight: 1, opacity: 0.15, dashArray: '5, 10' 
-    }).addTo(map);
-}
 
-/* --- MARKERS & FOOTER --- */
-const markers = {};
-Object.keys(coords).forEach(id => {
-    const icon = L.divIcon({
-        className: 'custom-icon',
-        html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1px solid white; box-shadow:0 0 5px var(--z-cyan);"></div>`,
-        iconSize: [8, 8]
-    });
-    markers[id] = L.marker(coords[id], { icon: icon }).addTo(map)
-        .bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom' });
+
+const zoomInput = document.getElementById('zoom-input');
+
+zoomInput.addEventListener('input', (e) => {
+
+    const val = parseFloat(e.target.value);
+
+    if (!isNaN(val)) map.setZoom(val);
+
 });
+
+map.on('zoomend', () => { zoomInput.value = map.getZoom().toFixed(1); });
+
+
+
+/* --- HIGH-VISIBILITY TIMEZONE BOUNDARIES --- */
+
+fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson')
+
+    .then(r => r.json()).then(data => {
+
+        L.geoJSON(data, { 
+
+            style: { color: '#00e5ff', weight: 1.5, opacity: 0.3, dashArray: '4, 8', fillOpacity: 0 } 
+
+        }).addTo(map);
+
+    });
+
+
+
+const markers = {};
+
+Object.keys(markerData).forEach(id => {
+
+    const icon = L.divIcon({
+
+        className: 'custom-icon',
+
+        html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1.5px solid white;"></div>`,
+
+        iconSize: [8, 8],
+
+        iconAnchor: [4, 4]
+
+    });
+
+    
+
+    markers[id] = L.marker(markerData[id].pos, { icon: icon }).addTo(map)
+
+        .bindTooltip("", { 
+
+            permanent: true, 
+
+            direction: 'top', 
+
+            className: 'leaflet-tooltip-custom',
+
+            offset: [0, -10] 
+
+        });
+
+});
+
+
 
 const footer = document.getElementById("footer-container");
+
 const footerZones = ['guam', 'pago', 'hawaii', 'alaska', 'pacific', 'mt', 'et', 'pr'];
+
 footerZones.forEach(id => {
+
     const div = document.createElement("div");
+
     div.className = "tab";
-    div.innerHTML = `
-        <div class="tab-name">${id} <span class="tab-abbr" id="f-${id}-abbr"></span></div>
-        <div class="tab-time" id="f-${id}-t">--</div>
-        <div class="tab-date" id="f-${id}-d">--</div>
-    `;
+
+    div.innerHTML = `<div class="tab-name">${id} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
+
     footer.appendChild(div);
+
 });
 
-/* --- UPDATE ENGINE --- */
+
+
 function update() {
+
     const now = new Date();
+
     const localDayNum = now.toLocaleDateString('en-US', { day: 'numeric' });
 
-    document.getElementById("local-date-display").innerText = 
-        now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById("local-date-display").innerText = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+
 
     Object.keys(zones).forEach(id => {
-        const isZulu = (id === 'z');
-        const hour12Setting = isZulu ? false : !use24Hour;
 
-        // Get Time Zone abbreviation dynamically
+        const hour12Setting = (id === 'z') ? false : !use24Hour;
+
         const parts = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now);
+
         const tzAbbr = parts.find(p => p.type === 'timeZoneName').value;
 
+
+
         const timeOptions = { timeZone: zones[id], hour12: hour12Setting, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        const dateOptions = { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' };
-        
+
         const tzTimeFull = now.toLocaleTimeString('en-US', timeOptions);
-        const tzDate = now.toLocaleDateString('en-US', dateOptions);
+
         const zoneDayNum = now.toLocaleDateString('en-US', { timeZone: zones[id], day: 'numeric' });
+
         const isDiff = localDayNum !== zoneDayNum;
 
-        // Update Hero Clocks and Labels
-        if (id === "z") {
-            document.getElementById("z-t").innerText = tzTimeFull;
-            document.getElementById("z-abbr").innerText = tzAbbr;
-        }
-        if (id === "ct") {
-            document.getElementById("ct-t").innerText = tzTimeFull;
-            document.getElementById("ct-abbr").innerText = tzAbbr;
-        }
 
-        // Update Map Tooltips
+
+        if (id === "z") document.getElementById("z-t").innerText = tzTimeFull;
+
+        if (id === "ct") document.getElementById("ct-t").innerText = tzTimeFull;
+
+
+
         if (markers[id]) {
+
             const mOpt = { ...timeOptions, second: undefined };
+
             markers[id].setTooltipContent(`
+
                 <div class="tooltip-name">${id} (${tzAbbr})</div>
+
                 <div class="tooltip-time">${now.toLocaleTimeString('en-US', mOpt)}</div>
+
             `);
+
         }
 
-        // Update Footer Tabs
+
+
         const ft = document.getElementById("f-" + id + "-t");
+
         const fd = document.getElementById("f-" + id + "-d");
+
         const fa = document.getElementById("f-" + id + "-abbr");
-        if (ft) {
-            const footTimeOpt = { ...timeOptions, second: undefined };
-            ft.innerText = now.toLocaleTimeString('en-US', footTimeOpt);
-        }
-        if (fd) { 
-            fd.innerText = tzDate; 
-            fd.className = "tab-date " + (isDiff ? "diff-day" : ""); 
-        }
+
+        if (ft) ft.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
+
+        if (fd) { fd.innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' }); fd.className = "tab-date " + (isDiff ? "diff-day" : ""); }
+
         if (fa) fa.innerText = `(${tzAbbr})`;
+
     });
+
 }
 
+
+
 setInterval(update, 1000);
+
 update();
+
 </script>
 
+
+
 </body>
+
 </html>
