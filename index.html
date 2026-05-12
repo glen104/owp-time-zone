@@ -89,7 +89,7 @@
         .date-zones { font-size: 0.7rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
 
         #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; }
-        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 5rem; color: var(--z-cyan); }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1rem; color: var(--z-cyan); }
         .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
         input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; }
         #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; }
@@ -152,7 +152,7 @@
         <input type="number" id="zoom-input" class="zoom-input" step="0.1" value="3.3">
     </div>
     <div class="control-group" style="flex-grow:1;">
-        <span>TIME ADJ</span>
+        <span>TIME ADJUSTMENT</span>
         <input type="range" id="time-slider" min="-25" max="25" step="1" value="0">
         <div id="offset-display">LIVE</div>
     </div>
