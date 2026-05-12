@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWP Time Zone - ADVANCED</title>
+    <title>OWP Time Zone - OPERATIONAL</title>
 
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/60660814?s=280&v=4">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,7 +48,7 @@
 
         .header-top-left { display: flex; align-items: center; gap: 12px; }
         .logos { display: flex; align-items: center; gap: 8px; }
-        .logos img { height: 45px; }
+        .logos img { height: 50px; } /* Updated to preferred large size */
 
         .adv-btn {
             background: #eee;
@@ -73,7 +73,6 @@
             text-align: center;
         }
 
-        /* --- 12/24 TOGGLE STYLES --- */
         .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.75rem; }
         .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -82,24 +81,28 @@
         input:checked + .slider { background-color: var(--nws-blue); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .header-bottom { display: flex; justify-content: center; padding-bottom: 5px; }
-        #local-date-display { display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .header-bottom { display: flex; justify-content: flex-end; padding-bottom: 5px; }
+        #local-date-display { display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap; }
         .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 2px 10px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
-        .date-line { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; color: var(--nws-blue); }
-        .date-zones { font-size: 0.7rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
+        .date-line { font-size: 1rem; font-weight: 900; text-transform: uppercase; color: var(--nws-blue); }
+        .date-zones { font-size: 0.8rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
 
         #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; }
-        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 1rem; color: var(--z-cyan); }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.85rem; color: var(--z-cyan); }
         .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
         input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; }
-        #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; }
+        #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; font-size: 1.1rem; }
 
+        /* --- HERO CLOCKS: SIDE BY SIDE --- */
         .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px 10px; flex-shrink: 0; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; border-top: 4px solid transparent; }
-        .z-card { border-top-color: var(--z-cyan); }
-        .ct-card { border-top-color: var(--ct-gold); }
-        .big-time { font-size: clamp(1.8rem, 5vw, 3.2rem); font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
-        .label-mini { font-size: 0.9rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; border-top: 5px solid transparent; }
+        
+        .ct-card { border-top-color: var(--ct-gold); } /* CT on Left */
+        .z-card { border-top-color: var(--z-cyan); }   /* Zulu on Right */
+        
+        .big-time { font-size: clamp(1.8rem, 5vw, 3.8rem); font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
+        .label-mini { font-size: 0.8rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
+        
         .z-card .big-time { color: var(--z-cyan); }
         .ct-card .big-time { color: var(--ct-gold); }
 
@@ -107,15 +110,15 @@
         #map { height: 100%; width: 100%; background: #0b0f14; }
         #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-size: 8vw; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; }
 
-        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 1px 8px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
-        .tooltip-name { font-size: 0.9rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; }
-        .tooltip-time { font-size: 1.5rem; font-family: monospace; font-weight: 900; line-height: 1; }
+        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+        .tooltip-name { font-size: 0.8rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 2px; font-weight: 800; width: 100%; }
+        .tooltip-time { font-size: 1.4rem; font-family: monospace; font-weight: 900; line-height: 1; }
 
         .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
         .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; }
-        .tab-name { font-size: 0.9rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
-        .tab-time { font-size: 1.2rem; font-weight: bold; font-family: monospace; margin: 0; }
-        .tab-date { font-size: 0.8rem; font-weight: bold; color: var(--z-cyan); }
+        .tab-name { font-size: 0.8rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
+        .tab-time { font-size: 1.1rem; font-weight: bold; font-family: monospace; margin: 0; }
+        .tab-date { font-size: 0.75rem; font-weight: bold; color: var(--z-cyan); }
     </style>
 </head>
 
@@ -160,8 +163,8 @@
 </div>
 
 <div class="hero">
-    <div class="card z-card"><div class="label-mini">ZULU TIME (UTC)</div><div class="big-time" id="z-t">--:--:--</div></div>
     <div class="card ct-card"><div class="label-mini">CENTRAL TIME (CT)</div><div class="big-time" id="ct-t">--:--:--</div></div>
+    <div class="card z-card"><div class="label-mini">ZULU TIME (UTC)</div><div class="big-time" id="z-t">--:--:--</div></div>
 </div>
 
 <div id="map-wrapper">
@@ -174,7 +177,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-// Toggle set to True (24H) by default
 let use24Hour = true;
 const toggle = document.getElementById('time-toggle');
 toggle.addEventListener('change', () => { use24Hour = toggle.checked; update(); });
@@ -235,7 +237,7 @@ fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geo
 
 const markers = {};
 Object.keys(markerData).forEach(id => {
-    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1px solid white;"></div>`, iconSize: [8, 8], iconAnchor: [4, 4] });
+    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [8, 8], iconAnchor: [4, 4] });
     markers[id] = L.marker(markerData[id].pos, { icon: icon }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
 });
 
@@ -254,7 +256,6 @@ function update() {
     const dateGroups = {}; 
 
     Object.keys(zones).forEach(id => {
-        // hour12 is false for Zulu or when use24Hour toggle is on
         const hour12Setting = (id === 'z') ? false : !use24Hour;
         const timeOptions = { timeZone: zones[id], hour12: hour12Setting, hour: '2-digit', minute: '2-digit', second: '2-digit' };
         const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
@@ -271,7 +272,7 @@ function update() {
             let boxContent = `<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${timeStr}</div>`;
             if (id === 'guam') {
                 const boxDate = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
-                boxContent += `<div style="font-size:0.75rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${boxDate}</div>`;
+                boxContent += `<div style="font-size:0.8rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${boxDate}</div>`;
             }
             markers[id].setTooltipContent(boxContent);
         }
