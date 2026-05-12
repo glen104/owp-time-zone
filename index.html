@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWP Time Zone</title>
+    <title>OWP Time Zone - ADVANCED</title>
 
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/60660814?s=280&v=4">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -14,7 +14,6 @@
             --card-bg: #0d1117;
             --z-cyan: #00e5ff;
             --ct-gold: #ffcc00;
-            --alert-red: #ff3333;
             --border: #30363d;
             --nws-blue: #003087;
         }
@@ -32,56 +31,50 @@
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             background: white;
-            padding: 4px 20px;
             border-bottom: 4px solid var(--nws-blue);
-            min-height: 65px;
             flex-shrink: 0;
-            z-index: 1000;
+            z-index: 1001;
+            padding: 5px 15px;
         }
-        .logos { display: flex; align-items: center; gap: 12px; }
-        .logos img { height: 26px; }
-        
-        .header-right { display: flex; align-items: center; gap: 20px; }
-        #local-date-display { 
+
+        .header-top {
             display: flex;
-            flex-direction: row; 
-            gap: 15px; 
-            font-family: 'Segoe UI', Arial, sans-serif;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 5px;
         }
-        .date-block { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            border: 2px solid var(--nws-blue); 
-            padding: 3px 12px;
-            border-radius: 6px;
-            background-color: rgba(0, 48, 135, 0.03);
-        }
-        .date-line { 
-            font-size: 0.95rem; 
-            font-weight: 900; 
-            text-transform: uppercase; 
+
+        .header-top-left { display: flex; align-items: center; gap: 12px; }
+        .logos { display: flex; align-items: center; gap: 8px; }
+        .logos img { height: 22px; }
+
+        .adv-btn {
+            background: #eee;
             color: var(--nws-blue);
-            white-space: nowrap; 
+            border: 1px solid #ccc;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-transform: uppercase;
         }
-        .date-zones { 
-            font-size: 0.85rem; 
-            font-weight: 800; 
+
+        #header-status {
             color: var(--nws-blue);
-            opacity: 0.9; 
-            margin-top: -1px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: none;
+            white-space: nowrap;
+            flex-grow: 1;
             text-align: center;
         }
 
-        .zoom-control { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.8rem; border-left: 1px solid #ddd; padding-left: 15px; }
-        .zoom-control input { width: 55px; border: 1.5px solid var(--nws-blue); border-radius: 4px; padding: 2px 5px; font-weight: bold; text-align: center; color: var(--nws-blue); }
-
-        .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.8rem; }
+        /* --- 12/24 TOGGLE STYLES --- */
+        .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.75rem; }
         .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
@@ -89,58 +82,57 @@
         input:checked + .slider { background-color: var(--nws-blue); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 2px 10px; flex-shrink: 0; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 4px; text-align: center; border-top: 4px solid transparent; }
+        .header-bottom { display: flex; justify-content: center; padding-bottom: 5px; }
+        #local-date-display { display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 2px 10px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
+        .date-line { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; color: var(--nws-blue); }
+        .date-zones { font-size: 0.7rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
+
+        #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.75rem; color: var(--z-cyan); }
+        .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
+        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; }
+        #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; }
+
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px 10px; flex-shrink: 0; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; border-top: 4px solid transparent; }
         .z-card { border-top-color: var(--z-cyan); }
         .ct-card { border-top-color: var(--ct-gold); }
-        .big-time { font-size: 3.5rem; font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
-        .label-mini { font-size: 0.7rem; color: #8b949e; letter-spacing: 2px; font-weight: bold; margin-bottom: 2px; }
-
+        .big-time { font-size: clamp(1.8rem, 5vw, 3.2rem); font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
+        .label-mini { font-size: 0.65rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
         .z-card .big-time { color: var(--z-cyan); }
         .ct-card .big-time { color: var(--ct-gold); }
 
-        #map { flex-grow: 1; width: 100%; background: #0b0f14; }
-        .leaflet-tooltip-custom {
-            background: rgba(0, 0, 0, 0.95) !important;
-            color: #ffffff !important;
-            border: 1.5px solid var(--z-cyan) !important;
-            border-radius: 5px;
-            padding: 1px 8px !important;
-            min-width: 100px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
-            opacity: 1 !important;
-        }
-        .tooltip-name { font-size: 0.75rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; }
-        .tooltip-time { font-size: 1.3rem; font-family: monospace; font-weight: 900; line-height: 1; }
+        #map-wrapper { flex-grow: 1; position: relative; width: 100%; overflow: hidden; }
+        #map { height: 100%; width: 100%; background: #0b0f14; }
+        #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-size: 8vw; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; }
 
-        .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; padding: 6px; background: #080a0f; flex-shrink: 0; }
-        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 5px; text-align: center; border-radius: 5px; }
-        .tab-name { font-size: 0.65rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
-        .tab-time { font-size: 1.2rem; font-weight: bold; font-family: monospace; margin: 1px 0; }
-        .tab-date { font-size: 0.75rem; font-weight: bold; color: var(--z-cyan); }
+        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 1px 8px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+        .tooltip-name { font-size: 0.7rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; }
+        .tooltip-time { font-size: 1.2rem; font-family: monospace; font-weight: 900; line-height: 1; }
+
+        .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
+        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; }
+        .tab-name { font-size: 0.55rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
+        .tab-time { font-size: 1rem; font-weight: bold; font-family: monospace; margin: 0; }
+        .tab-date { font-size: 0.65rem; font-weight: bold; color: var(--z-cyan); }
     </style>
 </head>
 
 <body>
 
 <header>
-    <div class="logos">
-        <img src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg">
-        <img src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg">
-        <img src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png">
-    </div>
-    <div class="header-right">
-        <div id="local-date-display">--</div>
-        
-        <div class="zoom-control">
-            <span>ZOOM</span>
-            <input type="number" id="zoom-input" step="0.3" value="3.2">
+    <div class="header-top">
+        <div class="header-top-left">
+            <div class="logos">
+                <img src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg">
+                <img src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg">
+                <img src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png">
+            </div>
+            <button class="adv-btn" onclick="toggleAdv()">ADVANCED</button>
         </div>
+
+        <div id="header-status">TIME NOT CURRENT</div>
 
         <div class="toggle-container">
             <span>12H</span>
@@ -148,22 +140,73 @@
             <span>24H</span>
         </div>
     </div>
+    
+    <div class="header-bottom">
+        <div id="local-date-display">--</div>
+    </div>
 </header>
+
+<div id="adv-panel">
+    <div class="control-group">
+        <span>ZOOM</span>
+        <input type="number" id="zoom-input" class="zoom-input" step="0.1" value="3.3">
+    </div>
+    <div class="control-group" style="flex-grow:1;">
+        <span>TIME ADJ</span>
+        <input type="range" id="time-slider" min="-25" max="25" step="1" value="0">
+        <div id="offset-display">LIVE</div>
+    </div>
+    <button class="adv-btn" style="background:var(--nws-blue); color:white; border:none;" onclick="resetTime()">RESET</button>
+</div>
 
 <div class="hero">
     <div class="card z-card"><div class="label-mini">ZULU TIME (UTC)</div><div class="big-time" id="z-t">--:--:--</div></div>
     <div class="card ct-card"><div class="label-mini">CENTRAL TIME (CT)</div><div class="big-time" id="ct-t">--:--:--</div></div>
 </div>
 
-<div id="map"></div>
+<div id="map-wrapper">
+    <div id="map-watermark">TIME NOT CURRENT</div>
+    <div id="map"></div>
+</div>
+
 <div class="footer" id="footer-container"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+// Toggle set to True (24H) by default
 let use24Hour = true;
 const toggle = document.getElementById('time-toggle');
 toggle.addEventListener('change', () => { use24Hour = toggle.checked; update(); });
+
+let simOffsetHours = 0;
+const slider = document.getElementById('time-slider');
+const offsetDisplay = document.getElementById('offset-display');
+const headerStatus = document.getElementById('header-status');
+const mapWatermark = document.getElementById('map-watermark');
+
+function toggleAdv() {
+    const panel = document.getElementById('adv-panel');
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+}
+
+slider.addEventListener('input', (e) => {
+    simOffsetHours = parseInt(e.target.value);
+    offsetDisplay.innerText = simOffsetHours === 0 ? "LIVE" : (simOffsetHours > 0 ? "+" : "") + simOffsetHours + "h";
+    const showWarning = simOffsetHours !== 0;
+    headerStatus.style.display = showWarning ? 'block' : 'none';
+    mapWatermark.style.display = showWarning ? 'block' : 'none';
+    update();
+});
+
+function resetTime() {
+    simOffsetHours = 0;
+    slider.value = 0;
+    offsetDisplay.innerText = "LIVE";
+    headerStatus.style.display = 'none';
+    mapWatermark.style.display = 'none';
+    update();
+}
 
 const zones = {
     z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", 
@@ -172,28 +215,17 @@ const zones = {
 };
 
 const markerData = {
-    guam:    { pos: [13.44, -215.21] },
-    pago:    { pos: [-14.27, -170.70] },
-    hawaii:  { pos: [21.31, -159.86] },
-    alaska:  { pos: [58.21, -148.90] },
-    pacific: { pos: [34.00, -118.33] },
-    mt:      { pos: [40.54, -104.66] },
-    ct:      { pos: [31.10, -88.56] }, 
-    et:      { pos: [38.99, -77.03] }, 
-    pr:      { pos: [18.22, -66.59] }
+    guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] },
+    hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] },
+    pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.99] },
+    ct: { pos: [33.10, -87.56] }, et: { pos: [38.99, -77.03] }, pr: { pos: [18.22, -66.59] }
 };
 
-const map = L.map('map', { 
-    zoomSnap: 0.1, zoomDelta: 0.02, scrollWheelZoom: false, zoomControl: true, minZoom: 2, worldCopyJump: false, attributionControl: false 
-}).setView([27.6, -108], 3.34);
-
+const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false }).setView([27.6, -108], 3.34);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
 const zoomInput = document.getElementById('zoom-input');
-zoomInput.addEventListener('input', (e) => {
-    const val = parseFloat(e.target.value);
-    if (!isNaN(val)) map.setZoom(val);
-});
+zoomInput.addEventListener('input', (e) => { map.setZoom(parseFloat(e.target.value)); });
 map.on('zoomend', () => { zoomInput.value = map.getZoom().toFixed(1); });
 
 fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson')
@@ -203,14 +235,8 @@ fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geo
 
 const markers = {};
 Object.keys(markerData).forEach(id => {
-    const icon = L.divIcon({
-        className: 'custom-icon',
-        html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1.5px solid white;"></div>`,
-        iconSize: [8, 8],
-        iconAnchor: [4, 4]
-    });
-    markers[id] = L.marker(markerData[id].pos, { icon: icon }).addTo(map)
-        .bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
+    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1px solid white;"></div>`, iconSize: [8, 8], iconAnchor: [4, 4] });
+    markers[id] = L.marker(markerData[id].pos, { icon: icon }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
 });
 
 const footer = document.getElementById("footer-container");
@@ -223,61 +249,49 @@ footerZones.forEach(id => {
 });
 
 function update() {
-    const now = new Date();
+    const realNow = new Date();
+    const now = new Date(realNow.getTime() + (simOffsetHours * 60 * 60 * 1000));
     const dateGroups = {}; 
 
     Object.keys(zones).forEach(id => {
+        // hour12 is false for Zulu or when use24Hour toggle is on
         const hour12Setting = (id === 'z') ? false : !use24Hour;
-        const parts = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now);
-        const tzAbbr = parts.find(p => p.type === 'timeZoneName').value;
         const timeOptions = { timeZone: zones[id], hour12: hour12Setting, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        const tzTimeFull = now.toLocaleTimeString('en-US', timeOptions);
-
+        const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
         const dateStr = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+        
         if (!dateGroups[dateStr]) dateGroups[dateStr] = [];
         dateGroups[dateStr].push(id.toUpperCase());
 
-        if (id === "z") document.getElementById("z-t").innerText = tzTimeFull;
-        if (id === "ct") document.getElementById("ct-t").innerText = tzTimeFull;
+        if (id === "z") document.getElementById("z-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, hour12: false });
+        if (id === "ct") document.getElementById("ct-t").innerText = now.toLocaleTimeString('en-US', timeOptions);
 
         if (markers[id]) {
-            const mOpt = { ...timeOptions, second: undefined };
-            const timeStr = now.toLocaleTimeString('en-US', mOpt);
-            
+            const timeStr = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
             let boxContent = `<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${timeStr}</div>`;
-            
-            // Only add extra date info for Guam
             if (id === 'guam') {
                 const boxDate = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
                 boxContent += `<div style="font-size:0.75rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${boxDate}</div>`;
             }
-            
             markers[id].setTooltipContent(boxContent);
         }
 
-        const ft = document.getElementById("f-" + id + "-t");
-        const fd = document.getElementById("f-" + id + "-d");
-        const fa = document.getElementById("f-" + id + "-abbr");
-        if (ft) ft.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
-        if (fd) fd.innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
-        if (fa) fa.innerText = `(${tzAbbr})`;
+        if (document.getElementById("f-" + id + "-t")) {
+            document.getElementById("f-" + id + "-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
+            document.getElementById("f-" + id + "-d").innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById("f-" + id + "-abbr").innerText = `(${tzAbbr})`;
+        }
     });
 
     let headerHTML = "";
-    const sortedDates = Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b));
-
-    sortedDates.forEach(date => {
-        headerHTML += `<div class="date-block">
-            <div class="date-line">${date}</div>
-            <div class="date-zones">(${dateGroups[date].join(', ')})</div>
-        </div>`;
+    Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b)).forEach(date => {
+        headerHTML += `<div class="date-block"><div class="date-line">${date}</div><div class="date-zones">(${dateGroups[date].join(', ')})</div></div>`;
     });
     document.getElementById("local-date-display").innerHTML = headerHTML;
 }
 
-setInterval(update, 1000);
+setInterval(() => { if (simOffsetHours === 0) update(); }, 1000);
 update();
 </script>
-
 </body>
 </html>
