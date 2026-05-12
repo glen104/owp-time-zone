@@ -48,7 +48,7 @@
 
         .header-top-left { display: flex; align-items: center; gap: 12px; }
         .logos { display: flex; align-items: center; gap: 8px; }
-        .logos img { height: 22px; }
+        .logos img { height: 45px; }
 
         .adv-btn {
             background: #eee;
@@ -89,7 +89,7 @@
         .date-zones { font-size: 0.7rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
 
         #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; }
-        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.75rem; color: var(--z-cyan); }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 5rem; color: var(--z-cyan); }
         .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
         input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; }
         #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; }
@@ -99,7 +99,7 @@
         .z-card { border-top-color: var(--z-cyan); }
         .ct-card { border-top-color: var(--ct-gold); }
         .big-time { font-size: clamp(1.8rem, 5vw, 3.2rem); font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
-        .label-mini { font-size: 0.65rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
+        .label-mini { font-size: 0.9rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
         .z-card .big-time { color: var(--z-cyan); }
         .ct-card .big-time { color: var(--ct-gold); }
 
@@ -108,14 +108,14 @@
         #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-size: 8vw; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; }
 
         .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 1px 8px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
-        .tooltip-name { font-size: 0.7rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; }
-        .tooltip-time { font-size: 1.2rem; font-family: monospace; font-weight: 900; line-height: 1; }
+        .tooltip-name { font-size: 0.9rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; }
+        .tooltip-time { font-size: 1.5rem; font-family: monospace; font-weight: 900; line-height: 1; }
 
         .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
         .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; }
-        .tab-name { font-size: 0.55rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
-        .tab-time { font-size: 1rem; font-weight: bold; font-family: monospace; margin: 0; }
-        .tab-date { font-size: 0.65rem; font-weight: bold; color: var(--z-cyan); }
+        .tab-name { font-size: 0.9rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
+        .tab-time { font-size: 1.2rem; font-weight: bold; font-family: monospace; margin: 0; }
+        .tab-date { font-size: 0.8rem; font-weight: bold; color: var(--z-cyan); }
     </style>
 </head>
 
@@ -217,8 +217,8 @@ const zones = {
 const markerData = {
     guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] },
     hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] },
-    pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.99] },
-    ct: { pos: [33.10, -87.56] }, et: { pos: [38.99, -77.03] }, pr: { pos: [18.22, -66.59] }
+    pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.6] },
+    ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] }
 };
 
 const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false }).setView([27.6, -108], 3.34);
