@@ -9,71 +9,86 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
+        /* ============================================================
+           FONT CONTROL CENTER (ADJUST SIZES HERE)
+        ============================================================ */
         :root {
-            --bg-dark: #06090f;
-            --card-bg: #0d1117;
-            --z-cyan: #00e5ff;
-            --ct-gold: #ffcc00;
-            --border: #30363d;
-            --nws-blue: #003087;
+            /* --- SITUATION MODE (Default) --- */
+            --fs-header-status: 1.6rem;
+            --fs-adv-btn: 0.8rem;
+            --fs-toggle-text: 0.9rem;
+            --fs-date-line: 1.3rem;
+            --fs-date-zones: 1.1rem;
+            --fs-hero-time: clamp(1.8rem, 5vw, 3.8rem);
+            --fs-hero-label: 1.3rem;
+            --fs-adv-label: 0.85rem;
+            --fs-offset-text: 1.1rem;
+            --fs-map-watermark: 9vw;
+            --fs-footer-name: 1rem;
+            --fs-footer-time: 1.3rem;
+            --fs-footer-date: 1rem;
+            --fs-tooltip-name: 0.85rem;
+            --fs-tooltip-time: 1.5rem;
+
+            /* OUTLINE CONTROL */
+            --ts-hero-outline: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+
+            --bg-dark: #06090f; --card-bg: #0d1117; --z-cyan: #00e5ff;
+            --ct-gold: #ffcc00; --border: #30363d; --nws-blue: #003087;
         }
 
+        body.mode-pc {
+            /* --- PC MODE OVERRIDES --- */
+            --fs-header-status: 1.0rem;
+            --fs-adv-btn: 0.75rem;
+            --fs-toggle-text: 0.75rem;
+            --fs-date-line: 0.85rem;
+            --fs-date-zones: 0.75rem;
+            --fs-hero-time: 2.5rem;
+            --fs-hero-label: 0.75rem;
+            --fs-adv-label: 0.75rem;
+            --fs-offset-text: 0.95rem;
+            --fs-map-watermark: 6vw;
+            --fs-footer-name: 0.7rem;
+            --fs-footer-time: 1.0rem;
+            --fs-footer-date: 0.65rem;
+            --fs-tooltip-name: 0.75rem;
+            --fs-tooltip-time: 1.2rem;
+
+            /* REMOVE OUTLINE IN PC MODE */
+            --ts-hero-outline: none;
+        }
+
+        /* ============================================================
+           APPLICATION STYLES
+        ============================================================ */
         * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: var(--bg-dark);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
+        body { margin: 0; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg-dark); color: white; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        header {
-            background: white;
-            border-bottom: 4px solid var(--nws-blue);
-            flex-shrink: 0;
-            z-index: 1001;
-            padding: 5px 15px;
+        header { 
+            background: white; 
+            border-bottom: 4px solid var(--nws-blue); 
+            flex-shrink: 0; 
+            z-index: 1001; 
+            padding: 2px 15px; 
         }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 5px;
+        
+        .header-top { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 15px; 
+            margin-bottom: 0px;
         }
-
+        
         .header-top-left { display: flex; align-items: center; gap: 12px; }
         .logos { display: flex; align-items: center; gap: 8px; }
-        .logos img { height: 50px; } /* Updated to preferred large size */
+        .logos img { height: 50px; }
 
-        .adv-btn {
-            background: #eee;
-            color: var(--nws-blue);
-            border: 1px solid #ccc;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-weight: 800;
-            font-size: 0.7rem;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+        .adv-btn { background: #eee; color: var(--nws-blue); border: 1px solid #ccc; padding: 3px 10px; border-radius: 4px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: var(--fs-adv-btn); }
+        #header-status { color: var(--nws-blue); font-weight: 900; letter-spacing: 1px; display: none; white-space: nowrap; flex-grow: 1; text-align: center; font-size: var(--fs-header-status); }
 
-        #header-status {
-            color: var(--nws-blue);
-            font-size: 1.1rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            display: none;
-            white-space: nowrap;
-            flex-grow: 1;
-            text-align: center;
-        }
-
-        .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: 0.75rem; }
+        .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: var(--fs-toggle-text); }
         .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
@@ -81,48 +96,50 @@
         input:checked + .slider { background-color: var(--nws-blue); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .header-bottom { display: flex; justify-content: flex-end; padding-bottom: 5px; }
-        #local-date-display { display: flex; flex-direction: row; gap: 10px; flex-wrap: wrap; }
-        .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 2px 10px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
-        .date-line { font-size: 1rem; font-weight: 900; text-transform: uppercase; color: var(--nws-blue); }
-        .date-zones { font-size: 0.8rem; font-weight: 800; color: var(--nws-blue); opacity: 0.9; }
+        .header-bottom { display: flex; justify-content: flex-end; padding-top: 0px; padding-bottom: 2px; }
+        #local-date-display { display: flex; flex-direction: row; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 1px 8px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
+        .date-line { text-transform: uppercase; color: var(--nws-blue); font-weight: 900; font-size: var(--fs-date-line); line-height: 1; }
+        .date-zones { font-weight: 800; color: var(--nws-blue); opacity: 0.9; font-size: var(--fs-date-zones); line-height: 1.1; }
 
-        #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; }
-        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.85rem; color: var(--z-cyan); }
+        #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; flex-wrap: wrap; }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--z-cyan); font-size: var(--fs-adv-label); }
         .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
-        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; }
-        #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; font-size: 1.1rem; }
+        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; min-width: 150px; }
+        #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; font-size: var(--fs-offset-text); }
 
-        /* --- HERO CLOCKS: SIDE BY SIDE --- */
         .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px 10px; flex-shrink: 0; }
         .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; border-top: 5px solid transparent; }
+        .ct-card { border-top-color: var(--ct-gold); } .z-card { border-top-color: var(--z-cyan); }
         
-        .ct-card { border-top-color: var(--ct-gold); } /* CT on Left */
-        .z-card { border-top-color: var(--z-cyan); }   /* Zulu on Right */
-        
-        .big-time { font-size: clamp(1.8rem, 5vw, 3.8rem); font-family: monospace; font-weight: 800; line-height: 1; margin: 0; }
-        .label-mini { font-size: 0.8rem; color: #8b949e; letter-spacing: 1px; font-weight: bold; }
-        
-        .z-card .big-time { color: var(--z-cyan); }
-        .ct-card .big-time { color: var(--ct-gold); }
+        .big-time { font-family: monospace; font-weight: 800; line-height: 1; margin: 0; font-size: var(--fs-hero-time); }
+        .label-mini { 
+            color: #8b949e; 
+            letter-spacing: 1px; 
+            font-weight: bold; 
+            font-size: var(--fs-hero-label);
+            /* USES VARIABLE THAT TOGGLES BETWEEN MODES */
+            text-shadow: var(--ts-hero-outline);
+        }
+        .z-card .big-time { color: var(--z-cyan); } .ct-card .big-time { color: var(--ct-gold); }
 
         #map-wrapper { flex-grow: 1; position: relative; width: 100%; overflow: hidden; }
         #map { height: 100%; width: 100%; background: #0b0f14; }
-        #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-size: 8vw; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; }
+        #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; font-size: var(--fs-map-watermark); }
 
-        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
-        .tooltip-name { font-size: 0.8rem; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 2px; font-weight: 800; width: 100%; }
-        .tooltip-time { font-size: 1.4rem; font-family: monospace; font-weight: 900; line-height: 1; }
+        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; pointer-events: none; }
+        .tooltip-name { color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; font-size: var(--fs-tooltip-name); }
+        .tooltip-time { font-family: monospace; font-weight: 900; line-height: 1; font-size: var(--fs-tooltip-time); }
 
         .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
         .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; }
-        .tab-name { font-size: 0.8rem; color: #8b949e; font-weight: 800; text-transform: uppercase; }
-        .tab-time { font-size: 1.1rem; font-weight: bold; font-family: monospace; margin: 0; }
-        .tab-date { font-size: 0.75rem; font-weight: bold; color: var(--z-cyan); }
+        .tab-name { color: #8b949e; font-weight: 800; text-transform: uppercase; font-size: var(--fs-footer-name); }
+        .tab-time { font-weight: bold; font-family: monospace; margin: 0; font-size: var(--fs-footer-time); }
+        .tab-date { font-weight: bold; color: var(--z-cyan); font-size: var(--fs-footer-date); }
     </style>
 </head>
 
-<body>
+<body class="mode-situation">
 
 <header>
     <div class="header-top">
@@ -143,7 +160,6 @@
             <span>24H</span>
         </div>
     </div>
-    
     <div class="header-bottom">
         <div id="local-date-display">--</div>
     </div>
@@ -158,6 +174,11 @@
         <span>TIME ADJUSTMENT</span>
         <input type="range" id="time-slider" min="-25" max="25" step="1" value="0">
         <div id="offset-display">LIVE</div>
+    </div>
+    <div class="control-group">
+        <span>SITUATION DISPLAY</span>
+        <label class="switch"><input type="checkbox" id="mode-toggle" onchange="updateUIMode()"><span class="slider"></span></label>
+        <span>PC MODE</span>
     </div>
     <button class="adv-btn" style="background:var(--nws-blue); color:white; border:none;" onclick="resetTime()">RESET</button>
 </div>
@@ -177,6 +198,9 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+const situationDefaultZoom = 3.34;
+const pcDefaultZoom = 3.1; 
+
 let use24Hour = true;
 const toggle = document.getElementById('time-toggle');
 toggle.addEventListener('change', () => { use24Hour = toggle.checked; update(); });
@@ -192,6 +216,26 @@ function toggleAdv() {
     panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
 }
 
+function updateUIMode() {
+    const isPC = document.getElementById('mode-toggle').checked;
+    document.body.className = isPC ? 'mode-pc' : 'mode-situation';
+    
+    const targetZoom = isPC ? pcDefaultZoom : situationDefaultZoom;
+    map.setZoom(targetZoom);
+    document.getElementById('zoom-input').value = targetZoom;
+
+    Object.values(markers).forEach(marker => {
+        if (isPC) {
+            marker.dragging.enable();
+            marker.getElement().style.cursor = 'move';
+        } else {
+            marker.dragging.disable();
+            marker.getElement().style.cursor = '';
+        }
+    });
+    update();
+}
+
 slider.addEventListener('input', (e) => {
     simOffsetHours = parseInt(e.target.value);
     offsetDisplay.innerText = simOffsetHours === 0 ? "LIVE" : (simOffsetHours > 0 ? "+" : "") + simOffsetHours + "h";
@@ -202,50 +246,33 @@ slider.addEventListener('input', (e) => {
 });
 
 function resetTime() {
-    simOffsetHours = 0;
-    slider.value = 0;
-    offsetDisplay.innerText = "LIVE";
-    headerStatus.style.display = 'none';
-    mapWatermark.style.display = 'none';
+    simOffsetHours = 0; slider.value = 0; offsetDisplay.innerText = "LIVE";
+    headerStatus.style.display = 'none'; mapWatermark.style.display = 'none';
     update();
 }
 
-const zones = {
-    z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", 
-    hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", 
-    mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico"
-};
+const zones = { z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico" };
+const markerData = { guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] }, hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] }, pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.6] }, ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] } };
 
-const markerData = {
-    guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] },
-    hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] },
-    pacific: { pos: [34.00, -118.33] }, mt: { pos: [40.84, -103.6] },
-    ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] }
-};
-
-const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false }).setView([27.6, -108], 3.34);
+const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false }).setView([27.6, -108], situationDefaultZoom);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
 const zoomInput = document.getElementById('zoom-input');
 zoomInput.addEventListener('input', (e) => { map.setZoom(parseFloat(e.target.value)); });
 map.on('zoomend', () => { zoomInput.value = map.getZoom().toFixed(1); });
 
-fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson')
-    .then(r => r.json()).then(data => {
-        L.geoJSON(data, { style: { color: '#00e5ff', weight: 1.5, opacity: 0.3, dashArray: '4, 8', fillOpacity: 0 } }).addTo(map);
-    });
+fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson').then(r => r.json()).then(data => { L.geoJSON(data, { style: { color: '#00e5ff', weight: 1.5, opacity: 0.3, dashArray: '4, 8', fillOpacity: 0 } }).addTo(map); });
 
 const markers = {};
 Object.keys(markerData).forEach(id => {
-    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:8px; height:8px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [8, 8], iconAnchor: [4, 4] });
-    markers[id] = L.marker(markerData[id].pos, { icon: icon }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
+    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:10px; height:10px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
+    markers[id] = L.marker(markerData[id].pos, { icon: icon, draggable: false }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
 });
 
 const footer = document.getElementById("footer-container");
 const footerZones = ['guam', 'pago', 'hawaii', 'alaska', 'pacific', 'mt', 'et', 'pr'];
 footerZones.forEach(id => {
-    const div = document.createElement("div");
-    div.className = "tab";
+    const div = document.createElement("div"); div.className = "tab";
     div.innerHTML = `<div class="tab-name">${id} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
     footer.appendChild(div);
 });
@@ -254,40 +281,29 @@ function update() {
     const realNow = new Date();
     const now = new Date(realNow.getTime() + (simOffsetHours * 60 * 60 * 1000));
     const dateGroups = {}; 
-
     Object.keys(zones).forEach(id => {
         const hour12Setting = (id === 'z') ? false : !use24Hour;
         const timeOptions = { timeZone: zones[id], hour12: hour12Setting, hour: '2-digit', minute: '2-digit', second: '2-digit' };
         const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
         const dateStr = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
-        
         if (!dateGroups[dateStr]) dateGroups[dateStr] = [];
         dateGroups[dateStr].push(id.toUpperCase());
-
         if (id === "z") document.getElementById("z-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, hour12: false });
         if (id === "ct") document.getElementById("ct-t").innerText = now.toLocaleTimeString('en-US', timeOptions);
-
         if (markers[id]) {
             const timeStr = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
             let boxContent = `<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${timeStr}</div>`;
-            if (id === 'guam') {
-                const boxDate = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
-                boxContent += `<div style="font-size:0.8rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${boxDate}</div>`;
-            }
+            if (id === 'guam') boxContent += `<div style="font-size:0.75rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' })}</div>`;
             markers[id].setTooltipContent(boxContent);
         }
-
         if (document.getElementById("f-" + id + "-t")) {
             document.getElementById("f-" + id + "-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
             document.getElementById("f-" + id + "-d").innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
             document.getElementById("f-" + id + "-abbr").innerText = `(${tzAbbr})`;
         }
     });
-
     let headerHTML = "";
-    Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b)).forEach(date => {
-        headerHTML += `<div class="date-block"><div class="date-line">${date}</div><div class="date-zones">(${dateGroups[date].join(', ')})</div></div>`;
-    });
+    Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b)).forEach(date => { headerHTML += `<div class="date-block"><div class="date-line">${date}</div><div class="date-zones">(${dateGroups[date].join(', ')})</div></div>`; });
     document.getElementById("local-date-display").innerHTML = headerHTML;
 }
 
