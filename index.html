@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWP Time Zone - OPERATIONAL</title>
+    <title>OWP Time Zone</title>
 
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/60660814?s=280&v=4">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -13,44 +13,39 @@
            FONT CONTROL CENTER (ADJUST SIZES HERE)
         ============================================================ */
         :root {
-            /* --- SITUATION MODE (Default) --- */
             --fs-header-status: 1.6rem;
             --fs-adv-btn: 0.8rem;
             --fs-toggle-text: 0.9rem;
             --fs-date-line: 1.3rem;
             --fs-date-zones: 1.1rem;
-            --fs-hero-time: clamp(1.8rem, 5vw, 3.8rem);
+            --fs-hero-time: clamp(1.5rem, 4vw, 3.8rem);
             --fs-hero-label: 1.3rem;
             --fs-adv-label: 0.85rem;
             --fs-offset-text: 1.1rem;
             --fs-map-watermark: 9vw;
-            --fs-footer-name: 1rem;
-            --fs-footer-time: 1.3rem;
-            --fs-footer-date: 1rem;
-            --fs-tooltip-name: 0.85rem;
-            --fs-tooltip-time: 1.5rem;
+            --fs-footer-name: 0.85rem;
+            --fs-footer-time: 1.1rem;
+            --fs-footer-date: 0.75rem;
 
             --bg-dark: #06090f; --card-bg: #0d1117; --z-cyan: #00e5ff;
             --ct-gold: #ffcc00; --border: #30363d; --nws-blue: #003087;
+            --danger: #da3633;
         }
 
         body.mode-pc {
-            /* --- PC MODE OVERRIDES --- */
             --fs-header-status: 1.0rem;
             --fs-adv-btn: 0.65rem;
             --fs-toggle-text: 0.75rem;
             --fs-date-line: 0.85rem;
             --fs-date-zones: 0.75rem;
-            --fs-hero-time: 2.5rem;
+            --fs-hero-time: 2.2rem;
             --fs-hero-label: 0.75rem;
             --fs-adv-label: 0.75rem;
             --fs-offset-text: 0.95rem;
             --fs-map-watermark: 6vw;
             --fs-footer-name: 0.7rem;
-            --fs-footer-time: 1.0rem;
+            --fs-footer-time: 0.95rem;
             --fs-footer-date: 0.65rem;
-            --fs-tooltip-name: 0.75rem;
-            --fs-tooltip-time: 1.2rem;
         }
 
         /* ============================================================
@@ -59,27 +54,15 @@
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg-dark); color: white; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        header { 
-            background: white; 
-            border-bottom: 4px solid var(--nws-blue); 
-            flex-shrink: 0; 
-            z-index: 1001; 
-            padding: 2px 15px; 
-        }
-        
-        .header-top { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            gap: 15px; 
-            margin-bottom: 0px;
-        }
-        
+        header { background: white; border-bottom: 4px solid var(--nws-blue); flex-shrink: 0; z-index: 1001; padding: 2px 15px; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 0px; }
         .header-top-left { display: flex; align-items: center; gap: 12px; }
-        .logos { display: flex; align-items: center; gap: 8px; }
-        .logos img { height: 50px; }
+        .logos { display: flex; align-items: center; gap: 12px; }
+        .logos img { height: 50px; transition: height 0.2s ease; }
 
         .adv-btn { background: #eee; color: var(--nws-blue); border: 1px solid #ccc; padding: 3px 10px; border-radius: 4px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: var(--fs-adv-btn); }
+        .info-bubble { cursor: pointer; color: var(--nws-blue); font-size: 1rem; font-weight: bold; }
+        
         #header-status { color: var(--nws-blue); font-weight: 900; letter-spacing: 1px; display: none; white-space: nowrap; flex-grow: 1; text-align: center; font-size: var(--fs-header-status); }
 
         .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: var(--fs-toggle-text); }
@@ -96,45 +79,43 @@
         .date-line { text-transform: uppercase; color: var(--nws-blue); font-weight: 900; font-size: var(--fs-date-line); line-height: 1; }
         .date-zones { font-weight: 800; color: var(--nws-blue); opacity: 0.9; font-size: var(--fs-date-zones); line-height: 1.1; }
 
-        #adv-panel { background: #0d1117; padding: 8px 15px; display: none; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; flex-wrap: wrap; }
+        #adv-panel { background: #0d1117; padding: 10px 15px; display: none; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; flex-wrap: wrap; }
         .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--z-cyan); font-size: var(--fs-adv-label); }
-        .zoom-input { width: 45px; border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
-        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; min-width: 150px; }
+        .zoom-input, .zone-sel { border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
+        .zoom-input { width: 45px; }
+        .zone-sel { font-size: 0.75rem; font-weight: bold; }
+        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; min-width: 100px; }
         #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; font-size: var(--fs-offset-text); }
 
-        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 4px 10px; flex-shrink: 0; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; border-top: 5px solid transparent; }
-        .ct-card { border-top-color: var(--ct-gold); } .z-card { border-top-color: var(--z-cyan); }
-        
+        .hero { display: grid; gap: 8px; padding: 4px 10px; flex-shrink: 0; transition: all 0.3s ease; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; border-top: 5px solid #8b949e; }
+        .card.ct-card { border-top-color: var(--ct-gold); } 
+        .card.z-card { border-top-color: var(--z-cyan); }
         .big-time { font-family: monospace; font-weight: 800; line-height: 1; margin: 0; font-size: var(--fs-hero-time); }
-        
-        /* LABEL STYLES: REMOVED OUTLINE */
-        .label-mini { 
-            letter-spacing: 1px; 
-            font-weight: bold; 
-            font-size: var(--fs-hero-label);
-            text-shadow: none; 
-        }
-
-        /* MATCH COLORS TO THEIR CLOCKS */
-        .ct-card .label-mini { color: var(--ct-gold); }
-        .z-card .label-mini { color: var(--z-cyan); }
-
-        .z-card .big-time { color: var(--z-cyan); } .ct-card .big-time { color: var(--ct-gold); }
+        .label-mini { letter-spacing: 1px; font-weight: bold; font-size: var(--fs-hero-label); margin-bottom: 4px; }
+        .ct-card .label-mini, .ct-card .big-time { color: var(--ct-gold); }
+        .z-card .label-mini, .z-card .big-time { color: var(--z-cyan); }
 
         #map-wrapper { flex-grow: 1; position: relative; width: 100%; overflow: hidden; }
         #map { height: 100%; width: 100%; background: #0b0f14; }
         #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; font-size: var(--fs-map-watermark); }
 
-        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; pointer-events: none; }
-        .tooltip-name { color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; font-size: var(--fs-tooltip-name); }
-        .tooltip-time { font-family: monospace; font-weight: 900; line-height: 1; font-size: var(--fs-tooltip-time); }
+        /* --- UPDATED FOOTER HIGHLIGHTS --- */
+        .footer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
+        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; transition: border-bottom 0.2s ease; }
+        
+        /* Highlight only when class 'active-hero' is added by JS */
+        .tab.active-hero { border-bottom: 3px solid #ffffff; } /* Default Neutral */
+        .tab.active-hero.f-z { border-bottom: 3px solid var(--z-cyan); }
+        .tab.active-hero.f-ct { border-bottom: 3px solid var(--ct-gold); }
 
-        .footer { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
-        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; }
         .tab-name { color: #8b949e; font-weight: 800; text-transform: uppercase; font-size: var(--fs-footer-name); }
         .tab-time { font-weight: bold; font-family: monospace; margin: 0; font-size: var(--fs-footer-time); }
         .tab-date { font-weight: bold; color: var(--z-cyan); font-size: var(--fs-footer-date); }
+
+        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; pointer-events: none; }
+        .tooltip-name { color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; font-size: 0.85rem; }
+        .tooltip-time { font-family: monospace; font-weight: 900; line-height: 1; font-size: 1.5rem; }
     </style>
 </head>
 
@@ -144,15 +125,13 @@
     <div class="header-top">
         <div class="header-top-left">
             <div class="logos">
-                <img src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg">
-                <img src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg">
-                <img src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png">
+                <img id="noaa-logo" src="https://water.noaa.gov/assets/styles/public/images/noaa-logo.svg">
+                <img id="nws-logo" src="https://water.noaa.gov/assets/styles/public/images/nws-logo.svg">
+                <img id="owp-main-logo" src="https://water.noaa.gov/assets/styles/public/images/nav-logo-blue.png">
             </div>
             <button class="adv-btn" onclick="toggleAdv()">ADVANCED</button>
         </div>
-
         <div id="header-status">TIME NOT CURRENT</div>
-
         <div class="toggle-container">
             <span>12H</span>
             <label class="switch"><input type="checkbox" id="time-toggle" checked><span class="slider"></span></label>
@@ -169,23 +148,34 @@
         <span>ZOOM</span>
         <input type="number" id="zoom-input" class="zoom-input" step="0.1" value="3.3">
     </div>
+    <div class="control-group">
+        <span style="font-size: 0.7rem;">SITUATION DISPLAY</span>
+        <label class="switch"><input type="checkbox" id="mode-toggle" onchange="updateUIMode()"><span class="slider"></span></label>
+        <span style="font-size: 0.7rem;">PC MODE</span>
+    </div>
+    <div class="control-group">
+        <span style="font-size: 0.7rem;">OWP LOGO</span>
+        <label class="switch"><input type="checkbox" id="owp-logo-toggle" checked onchange="updateOWPLogo()"><span class="slider"></span></label>
+    </div>
     <div class="control-group" style="flex-grow:1;">
-        <span>TIME ADJUSTMENT</span>
+        <span>TIME ADJ</span>
         <input type="range" id="time-slider" min="-25" max="25" step="1" value="0">
         <div id="offset-display">LIVE</div>
     </div>
     <div class="control-group">
-        <span>SITUATION DISPLAY</span>
-        <label class="switch"><input type="checkbox" id="mode-toggle" onchange="updateUIMode()"><span class="slider"></span></label>
-        <span>PC MODE</span>
+        <span>HERO:</span>
+        <select class="zone-sel" id="hero-1" onchange="renderHero()"></select>
+        <select class="zone-sel" id="hero-2" onchange="renderHero()"></select>
+        <select class="zone-sel" id="hero-3" onchange="renderHero()"></select>
     </div>
-    <button class="adv-btn" style="background:var(--nws-blue); color:white; border:none;" onclick="resetTime()">RESET</button>
+    <div style="display:flex; align-items:center; gap:5px;">
+        <button class="adv-btn" style="background:var(--nws-blue); color:white; border:none;" onclick="manualSave()">SAVE SETTINGS</button>
+        <span class="info-bubble" onclick="showSaveInfo()">ⓘ</span>
+    </div>
+    <button class="adv-btn" style="background:var(--danger); color:white; border:none;" onclick="resetTime()">RESET TIME</button>
 </div>
 
-<div class="hero">
-    <div class="card ct-card"><div class="label-mini">CENTRAL TIME (CT)</div><div class="big-time" id="ct-t">--:--:--</div></div>
-    <div class="card z-card"><div class="label-mini">ZULU TIME (UTC)</div><div class="big-time" id="z-t">--:--:--</div></div>
-</div>
+<div class="hero" id="hero-container"></div>
 
 <div id="map-wrapper">
     <div id="map-watermark">TIME NOT CURRENT</div>
@@ -200,9 +190,146 @@
 const situationDefaultZoom = 3.34;
 const pcDefaultZoom = 3.1; 
 
+const zones = { z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico" };
+const zoneNames = { z: "ZULU TIME (UTC)", ct: "CENTRAL TIME (CT)", et: "EASTERN TIME (ET)", mt: "MOUNTAIN TIME (MT)", pacific: "PACIFIC TIME (PT)", alaska: "ALASKA TIME (AKT)", hawaii: "HAWAII TIME (HST)", guam: "GUAM TIME (CHST)", pago: "SAMOA TIME (SST)", pr: "ATLANTIC TIME (AST)" };
+
+let activeHeroZones = ['ct', 'z', 'none'];
 let use24Hour = true;
+let isPCMode = false;
+let owpLogoVisible = true;
+let savedZoom = situationDefaultZoom;
+let savedCenter = [38.5, -96.5];
+
+function saveSettings() {
+    const settings = {
+        heroZones: [document.getElementById('hero-1').value, document.getElementById('hero-2').value, document.getElementById('hero-3').value],
+        use24Hour: document.getElementById('time-toggle').checked,
+        isPCMode: document.getElementById('mode-toggle').checked,
+        owpLogoVisible: document.getElementById('owp-logo-toggle').checked,
+        zoom: map.getZoom(),
+        center: [map.getCenter().lat, map.getCenter().lng]
+    };
+    localStorage.setItem('owp_operational_v7', JSON.stringify(settings));
+}
+
+function manualSave() { saveSettings(); alert("Settings saved to browser cache."); }
+
+function showSaveInfo() {
+    alert("OWP CACHE INFORMATION\n\nThe following settings are stored in your browser:\n\n1. Selected Hero Time Zones\n2. 12H vs 24H Format\n3. Display Mode (Situation vs PC)\n4. OWP Logo Visibility State\n5. Current Map Zoom Level\n6. Current Map Position");
+}
+
+function updateOWPLogo() {
+    owpLogoVisible = document.getElementById('owp-logo-toggle').checked;
+    document.getElementById('owp-main-logo').style.display = owpLogoVisible ? 'block' : 'none';
+    const size = owpLogoVisible ? '50px' : '70px';
+    document.getElementById('noaa-logo').style.height = size;
+    document.getElementById('nws-logo').style.height = size;
+    saveSettings();
+}
+
+function initSettings() {
+    const saved = localStorage.getItem('owp_operational_v7');
+    if (saved) {
+        const data = JSON.parse(saved);
+        activeHeroZones = data.heroZones;
+        use24Hour = data.use24Hour;
+        isPCMode = data.isPCMode;
+        owpLogoVisible = data.owpLogoVisible !== undefined ? data.owpLogoVisible : true;
+        savedZoom = data.zoom;
+        savedCenter = data.center;
+        
+        document.getElementById('time-toggle').checked = use24Hour;
+        document.getElementById('mode-toggle').checked = isPCMode;
+        document.getElementById('owp-logo-toggle').checked = owpLogoVisible;
+        document.body.className = isPCMode ? 'mode-pc' : 'mode-situation';
+        
+        document.getElementById('owp-main-logo').style.display = owpLogoVisible ? 'block' : 'none';
+        const size = owpLogoVisible ? '50px' : '70px';
+        document.getElementById('noaa-logo').style.height = size;
+        document.getElementById('nws-logo').style.height = size;
+    }
+}
+
+function initSelectors() {
+    const selects = [document.getElementById('hero-1'), document.getElementById('hero-2'), document.getElementById('hero-3')];
+    selects.forEach((sel, i) => {
+        sel.innerHTML = '<option value="none">None</option>';
+        Object.keys(zones).forEach(zKey => {
+            const opt = document.createElement('option');
+            opt.value = zKey;
+            opt.innerText = zKey.toUpperCase();
+            sel.appendChild(opt);
+        });
+        sel.value = activeHeroZones[i];
+    });
+}
+
+function renderHero() {
+    const container = document.getElementById('hero-container');
+    activeHeroZones = [document.getElementById('hero-1').value, document.getElementById('hero-2').value, document.getElementById('hero-3').value].filter(z => z !== 'none');
+    container.style.gridTemplateColumns = `repeat(${activeHeroZones.length}, 1fr)`;
+    let html = '';
+    activeHeroZones.forEach(id => {
+        const themeClass = (id === 'ct') ? 'ct-card' : (id === 'z' ? 'z-card' : '');
+        html += `<div class="card ${themeClass}"><div class="label-mini" id="hero-${id}-label">${zoneNames[id]}</div><div class="big-time" id="hero-${id}-t">--:--:--</div></div>`;
+    });
+    container.innerHTML = html;
+    
+    // Sync footer highlights
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active-hero'));
+    activeHeroZones.forEach(id => {
+        const footTab = document.querySelector(`.tab.f-${id}`);
+        if (footTab) footTab.classList.add('active-hero');
+    });
+
+    saveSettings();
+    update();
+}
+
+const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+initSettings(); 
+map.setView(savedCenter, savedZoom);
+
+const zoomInput = document.getElementById('zoom-input');
+zoomInput.value = savedZoom;
+zoomInput.addEventListener('input', (e) => { map.setZoom(parseFloat(e.target.value)); });
+map.on('zoomend moveend', () => { zoomInput.value = map.getZoom().toFixed(1); saveSettings(); });
+
+fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson').then(r => r.json()).then(data => { L.geoJSON(data, { style: { color: '#00e5ff', weight: 1.5, opacity: 0.2, dashArray: '4, 8', fillOpacity: 0 } }).addTo(map); });
+
+const markerData = { guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] }, hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] }, pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.6] }, ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] } };
+const markers = {};
+Object.keys(markerData).forEach(id => {
+    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:10px; height:10px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
+    markers[id] = L.marker(markerData[id].pos, { icon: icon, draggable: isPCMode }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
+});
+
+const footer = document.getElementById("footer-container");
+const footerZones = ['guam', 'pago', 'hawaii', 'alaska', 'pacific', 'mt', 'ct', 'et', 'pr', 'z'];
+footerZones.forEach(id => {
+    const div = document.createElement("div"); 
+    div.className = `tab f-${id}`;
+    div.innerHTML = `<div class="tab-name">${id} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
+    footer.appendChild(div);
+});
+
+function updateUIMode() {
+    isPCMode = document.getElementById('mode-toggle').checked;
+    document.body.className = isPCMode ? 'mode-pc' : 'mode-situation';
+    const targetZoom = isPCMode ? pcDefaultZoom : situationDefaultZoom;
+    map.setZoom(targetZoom);
+    Object.values(markers).forEach(marker => {
+        if (isPCMode) { marker.dragging.enable(); marker.getElement().style.cursor = 'move'; } 
+        else { marker.dragging.disable(); marker.getElement().style.cursor = ''; }
+    });
+    saveSettings();
+    update();
+}
+
 const toggle = document.getElementById('time-toggle');
-toggle.addEventListener('change', () => { use24Hour = toggle.checked; update(); });
+toggle.addEventListener('change', () => { use24Hour = toggle.checked; saveSettings(); update(); });
 
 let simOffsetHours = 0;
 const slider = document.getElementById('time-slider');
@@ -215,88 +342,44 @@ function toggleAdv() {
     panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
 }
 
-function updateUIMode() {
-    const isPC = document.getElementById('mode-toggle').checked;
-    document.body.className = isPC ? 'mode-pc' : 'mode-situation';
-    
-    const targetZoom = isPC ? pcDefaultZoom : situationDefaultZoom;
-    map.setZoom(targetZoom);
-    document.getElementById('zoom-input').value = targetZoom;
-
-    Object.values(markers).forEach(marker => {
-        if (isPC) {
-            marker.dragging.enable();
-            marker.getElement().style.cursor = 'move';
-        } else {
-            marker.dragging.disable();
-            marker.getElement().style.cursor = '';
-        }
-    });
-    update();
-}
-
 slider.addEventListener('input', (e) => {
     simOffsetHours = parseInt(e.target.value);
     offsetDisplay.innerText = simOffsetHours === 0 ? "LIVE" : (simOffsetHours > 0 ? "+" : "") + simOffsetHours + "h";
-    const showWarning = simOffsetHours !== 0;
-    headerStatus.style.display = showWarning ? 'block' : 'none';
-    mapWatermark.style.display = showWarning ? 'block' : 'none';
+    headerStatus.style.display = simOffsetHours !== 0 ? 'block' : 'none';
+    mapWatermark.style.display = simOffsetHours !== 0 ? 'block' : 'none';
     update();
 });
 
-function resetTime() {
-    simOffsetHours = 0; slider.value = 0; offsetDisplay.innerText = "LIVE";
-    headerStatus.style.display = 'none'; mapWatermark.style.display = 'none';
-    update();
-}
-
-const zones = { z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico" };
-const markerData = { guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] }, hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] }, pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.6] }, ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] } };
-
-const map = L.map('map', { zoomSnap: 0.1, zoomDelta: 0.1, worldCopyJump: false, attributionControl: false }).setView([27.6, -108], situationDefaultZoom);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-
-const zoomInput = document.getElementById('zoom-input');
-zoomInput.addEventListener('input', (e) => { map.setZoom(parseFloat(e.target.value)); });
-map.on('zoomend', () => { zoomInput.value = map.getZoom().toFixed(1); });
-
-fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_time_zones.geojson').then(r => r.json()).then(data => { L.geoJSON(data, { style: { color: '#00e5ff', weight: 1.5, opacity: 0.3, dashArray: '4, 8', fillOpacity: 0 } }).addTo(map); });
-
-const markers = {};
-Object.keys(markerData).forEach(id => {
-    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:10px; height:10px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
-    markers[id] = L.marker(markerData[id].pos, { icon: icon, draggable: false }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
-});
-
-const footer = document.getElementById("footer-container");
-const footerZones = ['guam', 'pago', 'hawaii', 'alaska', 'pacific', 'mt', 'et', 'pr'];
-footerZones.forEach(id => {
-    const div = document.createElement("div"); div.className = "tab";
-    div.innerHTML = `<div class="tab-name">${id} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
-    footer.appendChild(div);
-});
+function resetTime() { simOffsetHours = 0; slider.value = 0; offsetDisplay.innerText = "LIVE"; headerStatus.style.display = 'none'; mapWatermark.style.display = 'none'; update(); }
 
 function update() {
     const realNow = new Date();
     const now = new Date(realNow.getTime() + (simOffsetHours * 60 * 60 * 1000));
     const dateGroups = {}; 
     Object.keys(zones).forEach(id => {
-        const hour12Setting = (id === 'z') ? false : !use24Hour;
-        const timeOptions = { timeZone: zones[id], hour12: hour12Setting, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
+        const h12 = (id === 'z' ? false : !use24Hour);
+        const timeOptions = { timeZone: zones[id], hour12: h12, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const tzParts = new Intl.DateTimeFormat('en-US', { timeZone: zones[id], timeZoneName: 'short' }).formatToParts(now);
+        const tzAbbr = tzParts.find(p => p.type === 'timeZoneName').value;
         const dateStr = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+        
         if (!dateGroups[dateStr]) dateGroups[dateStr] = [];
         dateGroups[dateStr].push(id.toUpperCase());
-        if (id === "z") document.getElementById("z-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, hour12: false });
-        if (id === "ct") document.getElementById("ct-t").innerText = now.toLocaleTimeString('en-US', timeOptions);
+
+        if (activeHeroZones.includes(id)) {
+            const el = document.getElementById(`hero-${id}-t`);
+            if (el) el.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, hour12: (id === 'z' ? false : !use24Hour) });
+            const labelEl = document.getElementById(`hero-${id}-label`);
+            if (labelEl) labelEl.innerText = `${zoneNames[id].split('(')[0].trim()} (${tzAbbr})`;
+        }
         if (markers[id]) {
-            const timeStr = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
-            let boxContent = `<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${timeStr}</div>`;
+            let boxContent = `<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined })}</div>`;
             if (id === 'guam') boxContent += `<div style="font-size:0.75rem; color:var(--z-cyan); font-weight:bold; margin-top:2px;">${now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' })}</div>`;
             markers[id].setTooltipContent(boxContent);
         }
-        if (document.getElementById("f-" + id + "-t")) {
-            document.getElementById("f-" + id + "-t").innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
+        const footT = document.getElementById("f-" + id + "-t");
+        if (footT) {
+            footT.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
             document.getElementById("f-" + id + "-d").innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
             document.getElementById("f-" + id + "-abbr").innerText = `(${tzAbbr})`;
         }
@@ -306,6 +389,8 @@ function update() {
     document.getElementById("local-date-display").innerHTML = headerHTML;
 }
 
+initSelectors();
+renderHero();
 setInterval(() => { if (simOffsetHours === 0) update(); }, 1000);
 update();
 </script>
