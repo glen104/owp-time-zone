@@ -30,9 +30,6 @@
             --fs-tooltip-name: 0.85rem;
             --fs-tooltip-time: 1.5rem;
 
-            /* OUTLINE CONTROL */
-            --ts-hero-outline: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-
             --bg-dark: #06090f; --card-bg: #0d1117; --z-cyan: #00e5ff;
             --ct-gold: #ffcc00; --border: #30363d; --nws-blue: #003087;
         }
@@ -40,7 +37,7 @@
         body.mode-pc {
             /* --- PC MODE OVERRIDES --- */
             --fs-header-status: 1.0rem;
-            --fs-adv-btn: 0.75rem;
+            --fs-adv-btn: 0.65rem;
             --fs-toggle-text: 0.75rem;
             --fs-date-line: 0.85rem;
             --fs-date-zones: 0.75rem;
@@ -54,9 +51,6 @@
             --fs-footer-date: 0.65rem;
             --fs-tooltip-name: 0.75rem;
             --fs-tooltip-time: 1.2rem;
-
-            /* REMOVE OUTLINE IN PC MODE */
-            --ts-hero-outline: none;
         }
 
         /* ============================================================
@@ -113,14 +107,19 @@
         .ct-card { border-top-color: var(--ct-gold); } .z-card { border-top-color: var(--z-cyan); }
         
         .big-time { font-family: monospace; font-weight: 800; line-height: 1; margin: 0; font-size: var(--fs-hero-time); }
+        
+        /* LABEL STYLES: REMOVED OUTLINE */
         .label-mini { 
-            color: #8b949e; 
             letter-spacing: 1px; 
             font-weight: bold; 
             font-size: var(--fs-hero-label);
-            /* USES VARIABLE THAT TOGGLES BETWEEN MODES */
-            text-shadow: var(--ts-hero-outline);
+            text-shadow: none; 
         }
+
+        /* MATCH COLORS TO THEIR CLOCKS */
+        .ct-card .label-mini { color: var(--ct-gold); }
+        .z-card .label-mini { color: var(--z-cyan); }
+
         .z-card .big-time { color: var(--z-cyan); } .ct-card .big-time { color: var(--ct-gold); }
 
         #map-wrapper { flex-grow: 1; position: relative; width: 100%; overflow: hidden; }
