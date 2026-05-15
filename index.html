@@ -10,7 +10,7 @@
     
     <style>
         /* ============================================================
-           FONT CONTROL CENTER
+           FONT & COLOR CONTROL CENTER
         ============================================================ */
         :root {
             --fs-header-status: 1.6rem;
@@ -27,8 +27,12 @@
             --fs-footer-time: 1.1rem;
             --fs-footer-date: 0.75rem;
 
-            --bg-dark: #06090f; --card-bg: #0d1117; --z-cyan: #00e5ff;
-            --ct-gold: #ffcc00; --border: #30363d; --nws-blue: #003087;
+            --color-slot-1: #FF9800; /* Vivid Amber */
+            --color-slot-2: #E040FB; /* Electric Purple */
+            --color-slot-3: #00E676; /* Spring Green */
+            --color-default: #ffffff; /* White */
+
+            --bg-dark: #06090f; --card-bg: #0d1117; --border: #30363d; --nws-blue: #003087;
             --danger: #da3633; --success: #00c853;
         }
 
@@ -40,23 +44,20 @@
             --fs-footer-date: 0.65rem;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; outline: none; }
         body { margin: 0; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg-dark); color: white; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
         header { background: white; border-bottom: 4px solid var(--nws-blue); flex-shrink: 0; z-index: 1001; padding: 2px 15px; }
-        .header-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 0px; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
         .header-top-left { display: flex; align-items: center; gap: 12px; }
         .logos { display: flex; align-items: center; gap: 12px; }
         .logos img { height: 50px; transition: height 0.2s ease; }
 
         .adv-btn { background: #eee; color: var(--nws-blue); border: 1px solid #ccc; padding: 3px 10px; border-radius: 4px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: var(--fs-adv-btn); }
-        
         .sync-status { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; font-weight: 900; color: var(--nws-blue); margin-left: 5px; text-transform: uppercase; }
         .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #999; }
-        .sync-dot.synced { background: var(--success); box-shadow: 0 0 5px var(--success); }
-        .sync-dot.offline { background: var(--danger); box-shadow: 0 0 5px var(--danger); }
-
-        #header-status { color: var(--nws-blue); font-weight: 900; letter-spacing: 1px; display: none; white-space: nowrap; flex-grow: 1; text-align: center; font-size: var(--fs-header-status); }
+        .sync-dot.synced { background: var(--success); }
+        .sync-dot.offline { background: var(--danger); }
 
         .toggle-container { display: flex; align-items: center; gap: 8px; color: var(--nws-blue); font-weight: bold; font-size: var(--fs-toggle-text); }
         .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
@@ -66,42 +67,36 @@
         input:checked + .slider { background-color: var(--nws-blue); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .header-bottom { display: flex; justify-content: flex-end; padding-top: 0px; padding-bottom: 2px; }
+        .header-bottom { display: flex; justify-content: flex-end; padding-bottom: 2px; }
         #local-date-display { display: flex; flex-direction: row; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-        .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 1px 8px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
-        .date-line { text-transform: uppercase; color: var(--nws-blue); font-weight: 900; font-size: var(--fs-date-line); line-height: 1; }
-        .date-zones { font-weight: 800; color: var(--nws-blue); opacity: 0.9; font-size: var(--fs-date-zones); line-height: 1.1; }
+        .date-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--nws-blue); padding: 2px 10px; border-radius: 6px; background-color: rgba(0, 48, 135, 0.03); }
+        .date-line { text-transform: uppercase; color: var(--nws-blue); font-weight: 900; font-size: var(--fs-date-line); line-height: 1; margin-bottom: 2px; }
+        .date-zones { font-weight: 900; color: var(--nws-blue); opacity: 0.9; font-size: var(--fs-date-zones); line-height: 1.1; letter-spacing: 1px; }
 
         #adv-panel { background: #0d1117; padding: 10px 15px; display: none; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 1000; flex-wrap: wrap; }
-        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--z-cyan); font-size: var(--fs-adv-label); }
-        .zoom-input, .zone-sel { border: 1.5px solid var(--z-cyan); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
+        .control-group { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--color-slot-2); font-size: var(--fs-adv-label); }
+        .zoom-input, .zone-sel { border: 1.5px solid var(--color-slot-2); background: black; color: white; border-radius: 4px; padding: 2px; text-align: center; }
         .zoom-input { width: 45px; }
-        .zone-sel { font-size: 0.75rem; font-weight: bold; }
-        input[type=range] { flex-grow: 1; accent-color: var(--z-cyan); cursor: pointer; min-width: 100px; }
+        input[type=range] { flex-grow: 1; accent-color: var(--color-slot-2); cursor: pointer; min-width: 100px; }
         #offset-display { font-family: monospace; font-weight: bold; color: white; min-width: 40px; text-align: center; font-size: var(--fs-offset-text); }
 
         .hero { display: grid; gap: 8px; padding: 4px 10px; flex-shrink: 0; transition: all 0.3s ease; }
         .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; border-top: 5px solid #8b949e; }
-        .card.ct-card { border-top-color: var(--ct-gold); } .card.z-card { border-top-color: var(--z-cyan); }
-        .big-time { font-family: monospace; font-weight: 800; line-height: 1; margin: 0; font-size: var(--fs-hero-time); }
-        .label-mini { letter-spacing: 1px; font-weight: bold; font-size: var(--fs-hero-label); margin-bottom: 4px; }
-        .ct-card .label-mini, .ct-card .big-time { color: var(--ct-gold); }
-        .z-card .label-mini, .z-card .big-time { color: var(--z-cyan); }
+        .big-time { font-family: monospace; font-weight: 800; line-height: 1; margin: 0; font-size: var(--fs-hero-time); text-shadow: none !important; }
+        .label-mini { letter-spacing: 1px; font-weight: bold; font-size: var(--fs-hero-label); margin-bottom: 4px; text-shadow: none !important; }
 
         #map-wrapper { flex-grow: 1; position: relative; width: 100%; overflow: hidden; }
         #map { height: 100%; width: 100%; background: #0b0f14; }
-        #map-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; font-weight: 900; color: rgba(0, 0, 0, 0.45); text-transform: uppercase; pointer-events: none; z-index: 999; display: none; letter-spacing: -2px; font-size: var(--fs-map-watermark); }
 
-        /* FOOTER & MAP BOX FONTS RESTORED */
         .footer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; padding: 4px; background: #080a0f; flex-shrink: 0; }
-        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; transition: border-bottom 0.2s ease; }
-        .tab.active-hero { border-bottom: 3px solid #ffffff; }
-        .tab.active-hero.f-z { border-bottom: 3px solid var(--z-cyan); }
-        .tab.active-hero.f-ct { border-bottom: 3px solid var(--ct-gold); }
+        .tab { background: var(--card-bg); border: 1px solid var(--border); padding: 4px; text-align: center; border-radius: 5px; transition: all 0.2s ease; border-bottom: 3px solid transparent; }
+        .tab-name { color: #8b949e; font-weight: 800; text-transform: uppercase; font-size: var(--fs-footer-name); }
+        .tab-time { font-weight: bold; font-family: monospace; margin: 0; font-size: var(--fs-footer-time); color: white; text-shadow: none !important; }
+        .tab-date { font-weight: bold; font-size: var(--fs-footer-date); color: #8b949e; }
 
-        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border: 1.5px solid var(--z-cyan) !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; pointer-events: none; }
-        .tooltip-name { color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; font-size: 0.85rem; }
-        .tooltip-time { font-family: monospace; font-weight: 900; line-height: 1; font-size: 1.5rem; }
+        .leaflet-tooltip-custom { background: rgba(0, 0, 0, 0.95) !important; color: #ffffff !important; border-radius: 5px; padding: 2px 10px !important; min-width: 95px; box-shadow: 0 4px 12px rgba(0,0,0,0.8); display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; pointer-events: none; border: 1px solid #444 !important; }
+        .tooltip-name { color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 0px; margin-bottom: 1px; font-weight: 800; width: 100%; font-size: 0.85rem; text-shadow: none !important; }
+        .tooltip-time { font-family: monospace; font-weight: 900; line-height: 1; font-size: 1.5rem; text-shadow: none !important; }
     </style>
 </head>
 
@@ -121,7 +116,6 @@
                 <span id="sync-text">SYNCING...</span>
             </div>
         </div>
-        <div id="header-status">TIME NOT CURRENT</div>
         <div class="toggle-container">
             <span>12H</span>
             <label class="switch"><input type="checkbox" id="time-toggle" checked><span class="slider"></span></label>
@@ -165,7 +159,6 @@
 <div class="hero" id="hero-container"></div>
 
 <div id="map-wrapper">
-    <div id="map-watermark">TIME NOT CURRENT</div>
     <div id="map"></div>
 </div>
 
@@ -174,81 +167,69 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ============================================================
-   ROBUST EPOCH-BASED NETWORK TIME LOGIC
-============================================================ */
 let networkOffset = 0; 
 
 async function syncOfficialTime() {
     const dot = document.getElementById('sync-dot');
     const text = document.getElementById('sync-text');
     try {
-        // Fetch absolute Unix Epoch time to avoid local DST/Timezone confusion
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+        const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC', { signal: AbortSignal.timeout(3000) });
         const data = await response.json();
-        
-        // serverTime is absolute UTC milliseconds since 1970
-        const serverTime = data.unixtime * 1000;
-        // localTime is absolute UTC milliseconds since 1970 on the browser
-        const localTime = Date.now();
-        
-        networkOffset = serverTime - localTime;
-        
-        dot.className = 'sync-dot synced';
-        text.innerText = 'SYNCED';
+        networkOffset = Date.UTC(data.year, data.month - 1, data.day, data.hour, data.minute, data.seconds, data.milliSeconds) - Date.now();
+        dot.className = 'sync-dot synced'; text.innerText = 'SYNCED';
     } catch (e) {
-        networkOffset = 0;
-        dot.className = 'sync-dot offline';
+        if(networkOffset === 0) dot.className = 'sync-dot offline';
         text.innerText = 'LOCAL';
     }
 }
 
-const zones = { z: "UTC", ct: "America/Chicago", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", hawaii: "Pacific/Honolulu", alaska: "America/Anchorage", pacific: "America/Los_Angeles", mt: "America/Denver", et: "America/New_York", pr: "America/Puerto_Rico" };
-const zoneNames = { z: "ZULU TIME (UTC)", ct: "CENTRAL TIME (CT)", et: "EASTERN TIME (ET)", mt: "MOUNTAIN TIME (MT)", pacific: "PACIFIC TIME (PT)", alaska: "ALASKA TIME (AKT)", hawaii: "HAWAII TIME (HST)", guam: "GUAM TIME (CHST)", pago: "SAMOA TIME (SST)", pr: "ATLANTIC TIME (AST)" };
+const zones = { z: "UTC", ct: "America/Chicago", et: "America/New_York", mt: "America/Denver", pacific: "America/Los_Angeles", alaska: "America/Anchorage", hawaii: "Pacific/Honolulu", guam: "Pacific/Guam", pago: "Pacific/Pago_Pago", pr: "America/Puerto_Rico" };
+const zoneNames = { z: "ZULU", ct: "CENTRAL", et: "EASTERN", mt: "MOUNTAIN", pacific: "PACIFIC", alaska: "ALASKA", hawaii: "HAWAII", guam: "GUAM", pago: "PAGO", pr: "PUERTO RICO" };
+
+// Header logic: Spell out GUAM and PAGO
+const shortNames = { z: "Z", ct: "CT", et: "ET", mt: "MT", pacific: "PT", alaska: "AK", hawaii: "HI", guam: "GUAM", pago: "PAGO", pr: "PR" };
 
 let activeHeroZones = ['ct', 'z', 'none'];
 let use24Hour = true;
 let isPCMode = false;
 let owpLogoVisible = true;
-const situationDefaultZoom = 3.34;
 const pcDefaultZoom = 3.1;
-let savedZoom = situationDefaultZoom;
+let savedZoom = 3.34;
 let savedCenter = [38.5, -96.5];
 
 function saveSettings() {
-    const settings = {
-        heroZones: [document.getElementById('hero-1').value, document.getElementById('hero-2').value, document.getElementById('hero-3').value],
-        use24Hour: document.getElementById('time-toggle').checked,
-        isPCMode: document.getElementById('mode-toggle').checked,
-        owpLogoVisible: document.getElementById('owp-logo-toggle').checked,
-        zoom: map.getZoom(),
-        center: [map.getCenter().lat, map.getCenter().lng]
-    };
-    localStorage.setItem('owp_operational_v10', JSON.stringify(settings));
+    try {
+        const settings = {
+            heroZones: [document.getElementById('hero-1').value, document.getElementById('hero-2').value, document.getElementById('hero-3').value],
+            use24Hour: document.getElementById('time-toggle').checked,
+            isPCMode: document.getElementById('mode-toggle').checked,
+            owpLogoVisible: document.getElementById('owp-logo-toggle').checked,
+            zoom: map.getZoom(),
+            center: [map.getCenter().lat, map.getCenter().lng]
+        };
+        localStorage.setItem('owp_operational_v20', JSON.stringify(settings));
+    } catch(e) {}
 }
 
 function manualSave() { saveSettings(); alert("Configuration Cached."); }
 
 function initSettings() {
-    const saved = localStorage.getItem('owp_operational_v10');
-    if (saved) {
-        const data = JSON.parse(saved);
-        activeHeroZones = data.heroZones;
-        use24Hour = data.use24Hour;
-        isPCMode = data.isPCMode;
-        owpLogoVisible = data.owpLogoVisible ?? true;
-        savedZoom = data.zoom;
-        savedCenter = data.center;
-        
-        document.getElementById('time-toggle').checked = use24Hour;
-        document.getElementById('mode-toggle').checked = isPCMode;
-        document.getElementById('owp-logo-toggle').checked = owpLogoVisible;
-        document.body.className = isPCMode ? 'mode-pc' : 'mode-situation';
-        document.getElementById('owp-main-logo').style.display = owpLogoVisible ? 'block' : 'none';
-        const s = owpLogoVisible ? '50px' : '70px';
-        document.getElementById('noaa-logo').style.height = s;
-        document.getElementById('nws-logo').style.height = s;
-    }
+    try {
+        const saved = localStorage.getItem('owp_operational_v20');
+        if (saved) {
+            const data = JSON.parse(saved);
+            activeHeroZones = data.heroZones; use24Hour = data.use24Hour; isPCMode = data.isPCMode;
+            owpLogoVisible = data.owpLogoVisible ?? true; savedZoom = data.zoom; savedCenter = data.center;
+            document.getElementById('time-toggle').checked = use24Hour;
+            document.getElementById('mode-toggle').checked = isPCMode;
+            document.getElementById('owp-logo-toggle').checked = owpLogoVisible;
+            document.body.className = isPCMode ? 'mode-pc' : 'mode-situation';
+            document.getElementById('owp-main-logo').style.display = owpLogoVisible ? 'block' : 'none';
+            const s = owpLogoVisible ? '50px' : '70px';
+            document.getElementById('noaa-logo').style.height = s;
+            document.getElementById('nws-logo').style.height = s;
+        }
+    } catch(e) {}
 }
 
 function updateOWPLogo() {
@@ -266,27 +247,34 @@ function initSelectors() {
         sel.innerHTML = '<option value="none">None</option>';
         Object.keys(zones).forEach(zKey => {
             const opt = document.createElement('option');
-            opt.value = zKey; opt.innerText = zKey.toUpperCase(); sel.appendChild(opt);
+            opt.value = zKey; opt.innerText = zoneNames[zKey]; sel.appendChild(opt);
         });
         sel.value = activeHeroZones[i];
     });
+}
+
+function getHeroColor(id) {
+    const idx = activeHeroZones.indexOf(id);
+    if (idx === 0) return 'var(--color-slot-1)';
+    if (idx === 1) return 'var(--color-slot-2)';
+    if (idx === 2) return 'var(--color-slot-3)';
+    return 'var(--color-default)';
 }
 
 function renderHero() {
     const container = document.getElementById('hero-container');
     activeHeroZones = [document.getElementById('hero-1').value, document.getElementById('hero-2').value, document.getElementById('hero-3').value].filter(z => z !== 'none');
     container.style.gridTemplateColumns = `repeat(${activeHeroZones.length}, 1fr)`;
+    
     let html = '';
-    activeHeroZones.forEach(id => {
-        const themeClass = (id === 'ct') ? 'ct-card' : (id === 'z' ? 'z-card' : '');
-        html += `<div class="card ${themeClass}"><div class="label-mini" id="hero-${id}-label">${zoneNames[id]}</div><div class="big-time" id="hero-${id}-t">--:--:--</div></div>`;
+    activeHeroZones.forEach((id, index) => {
+        const color = `var(--color-slot-${index + 1})`;
+        html += `<div class="card" style="border-top-color: ${color};">
+                    <div class="label-mini" style="color: ${color};">${zoneNames[id]}</div>
+                    <div class="big-time" id="hero-${id}-t" style="color: ${color};">--:--:--</div>
+                 </div>`;
     });
     container.innerHTML = html;
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active-hero'));
-    activeHeroZones.forEach(id => {
-        const footTab = document.querySelector(`.tab.f-${id}`);
-        if (footTab) footTab.classList.add('active-hero');
-    });
     saveSettings();
     update();
 }
@@ -306,7 +294,7 @@ fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geo
 const markerData = { guam: { pos: [13.44, -215.21] }, pago: { pos: [-14.27, -170.70] }, hawaii: { pos: [21.31, -159.86] }, alaska: { pos: [58.21, -148.90] }, pacific: { pos: [34.00, -118.33] }, mt: { pos: [39.84, -104.6] }, ct: { pos: [33.10, -87.56] }, et: { pos: [39.2, -77.03] }, pr: { pos: [18.22, -66.59] } };
 const markers = {};
 Object.keys(markerData).forEach(id => {
-    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:var(--z-cyan); width:10px; height:10px; border-radius:50%; border:1.5px solid white;"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
+    const icon = L.divIcon({ className: 'custom-icon', html: `<div style="background:white; width:10px; height:10px; border-radius:50%; border:1.5px solid #333;"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
     markers[id] = L.marker(markerData[id].pos, { icon: icon, draggable: isPCMode }).addTo(map).bindTooltip("", { permanent: true, direction: 'top', className: 'leaflet-tooltip-custom', offset: [0, -10] });
 });
 
@@ -314,14 +302,14 @@ const footer = document.getElementById("footer-container");
 const footerZones = ['guam', 'pago', 'hawaii', 'alaska', 'pacific', 'mt', 'ct', 'et', 'pr', 'z'];
 footerZones.forEach(id => {
     const div = document.createElement("div"); div.className = `tab f-${id}`;
-    div.innerHTML = `<div class="tab-name">${id} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
+    div.innerHTML = `<div class="tab-name">${zoneNames[id]} <span id="f-${id}-abbr"></span></div><div class="tab-time" id="f-${id}-t">--</div><div class="tab-date" id="f-${id}-d">--</div>`;
     footer.appendChild(div);
 });
 
 function updateUIMode() {
     isPCMode = document.getElementById('mode-toggle').checked;
     document.body.className = isPCMode ? 'mode-pc' : 'mode-situation';
-    const targetZoom = isPCMode ? pcDefaultZoom : situationDefaultZoom;
+    const targetZoom = isPCMode ? pcDefaultZoom : map.getZoom();
     map.setZoom(targetZoom);
     Object.values(markers).forEach(marker => {
         if (isPCMode) { marker.dragging.enable(); marker.getElement().style.cursor = 'move'; } 
@@ -336,26 +324,18 @@ toggle.addEventListener('change', () => { use24Hour = toggle.checked; saveSettin
 let simOffsetHours = 0;
 const slider = document.getElementById('time-slider');
 const offsetDisplay = document.getElementById('offset-display');
-const headerStatus = document.getElementById('header-status');
-const mapWatermark = document.getElementById('map-watermark');
-
-function toggleAdv() {
-    const panel = document.getElementById('adv-panel');
-    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
-}
 
 slider.addEventListener('input', (e) => {
     simOffsetHours = parseInt(e.target.value);
     offsetDisplay.innerText = simOffsetHours === 0 ? "LIVE" : (simOffsetHours > 0 ? "+" : "") + simOffsetHours + "h";
-    headerStatus.style.display = simOffsetHours !== 0 ? 'block' : 'none';
-    mapWatermark.style.display = simOffsetHours !== 0 ? 'block' : 'none';
     update();
 });
 
-function resetTime() { 
-    simOffsetHours = 0; slider.value = 0; offsetDisplay.innerText = "LIVE"; 
-    headerStatus.style.display = 'none'; mapWatermark.style.display = 'none'; 
-    update(); 
+function resetTime() { simOffsetHours = 0; slider.value = 0; offsetDisplay.innerText = "LIVE"; update(); }
+
+function toggleAdv() {
+    const panel = document.getElementById('adv-panel');
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
 }
 
 function update() {
@@ -371,35 +351,45 @@ function update() {
         const dateStr = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
         
         if (!dateGroups[dateStr]) dateGroups[dateStr] = [];
-        dateGroups[dateStr].push(id.toUpperCase());
+        dateGroups[dateStr].push(shortNames[id]);
+
+        const heroColor = getHeroColor(id);
+        const resolvedColor = (heroColor === 'var(--color-default)') ? '#ffffff' : heroColor;
 
         if (activeHeroZones.includes(id)) {
             const el = document.getElementById(`hero-${id}-t`);
             if (el) el.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, hour12: (id === 'z' ? false : !use24Hour) });
-            const labelEl = document.getElementById(`hero-${id}-label`);
-            if (labelEl) labelEl.innerText = `${zoneNames[id].split('(')[0].trim()} (${tzAbbr})`;
         }
+
         if (markers[id]) {
-            markers[id].setTooltipContent(`<div class="tooltip-name">${id} (${tzAbbr})</div><div class="tooltip-time">${now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined })}</div>`);
+            markers[id].setTooltipContent(`<div class="tooltip-name" style="color:${resolvedColor}">${zoneNames[id]} (${tzAbbr})</div><div class="tooltip-time" style="color:${resolvedColor}">${now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined })}</div>`);
+            markers[id].getElement().querySelector('div').style.backgroundColor = resolvedColor;
+            markers[id].getTooltip().getElement().style.borderColor = (resolvedColor === '#ffffff') ? '#444' : resolvedColor;
         }
-        const footT = document.getElementById("f-" + id + "-t");
-        if (footT) {
+
+        const footTab = document.querySelector(`.tab.f-${id}`);
+        if (footTab) {
+            footTab.style.borderBottomColor = (heroColor === 'var(--color-default)') ? 'transparent' : resolvedColor;
+            const footT = document.getElementById("f-" + id + "-t");
             footT.innerText = now.toLocaleTimeString('en-US', { ...timeOptions, second: undefined });
+            footT.style.color = (heroColor === 'var(--color-default)') ? 'white' : resolvedColor;
             document.getElementById("f-" + id + "-d").innerText = now.toLocaleDateString('en-US', { timeZone: zones[id], weekday: 'short', month: 'short', day: 'numeric' });
             document.getElementById("f-" + id + "-abbr").innerText = `(${tzAbbr})`;
         }
     });
+
     let headerHTML = "";
-    Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b)).forEach(date => { headerHTML += `<div class="date-block"><div class="date-line">${date}</div><div class="date-zones">(${dateGroups[date].join(', ')})</div></div>`; });
+    Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b)).forEach(date => { 
+        headerHTML += `<div class="date-block"><div class="date-line">${date}</div><div class="date-zones">(${dateGroups[date].join(', ')})</div></div>`; 
+    });
     document.getElementById("local-date-display").innerHTML = headerHTML;
 }
 
-// Startup Sequence
 syncOfficialTime();
 setInterval(syncOfficialTime, 600000); 
 initSelectors();
 renderHero();
-setInterval(() => { if (simOffsetHours === 0) update(); }, 1000);
+setInterval(update, 1000);
 update();
 </script>
 </body>
