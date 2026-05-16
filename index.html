@@ -761,8 +761,9 @@ async function fetchLiveNCOStatus() {
             const todayDate = today.getDate();
             const tomorrowDate = tomorrow.getDate();
 
-            const todayDay = (data.days || []).find(d => d.date && d.date.includes(todayDate));
-            const tomorrowDay = (data.days || []).find(d => d.date && d.date.includes(tomorrowDate));
+            // Match by checking if date string contains the day number as a word boundary
+            const todayDay = (data.days || []).find(d => d.date && d.date.split(' ').map(Number).includes(todayDate));
+            const tomorrowDay = (data.days || []).find(d => d.date && d.date.split(' ').map(Number).includes(tomorrowDate));
 
             // Build status display
             const todayStatus = todayDay ? shortStatusClock(todayDay.status) : shortStatusClock(data.status);
