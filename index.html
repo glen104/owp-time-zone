@@ -1254,7 +1254,22 @@ syncOfficialTime();
 setInterval(syncOfficialTime, 600000); 
 
 fetchLiveNCOStatus();
-setInterval(fetchLiveNCOStatus, 1800000); // 30 minutes
+// Schedule fetches at :02 and :32 past each hour to catch GitHub Action output
+function scheduleNCOFetch() {
+    var now = new Date();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
+    var nextTarget;
+    if(minutes < 2) nextTarget = 2;
+    else if(minutes < 32) nextTarget = 32;
+    else nextTarget = 62;
+    var msUntilNext = ((nextTarget - minutes) * 60 - seconds) * 1000;
+    setTimeout(function() {
+        fetchLiveNCOStatus();
+        setInterval(fetchLiveNCOStatus, 1800000);
+    }, msUntilNext);
+}
+scheduleNCOFetch();
 
 applyNWCOpsLevelUI();
 
