@@ -78,9 +78,9 @@
             font-weight: 900;
             text-transform: uppercase;
         }
-        .status-normal { color: var(--success); }
-        .status-caution { color: var(--color-slot-1); }
-        .status-critical { color: var(--danger); font-family: 'Arial Black', sans-serif; }
+        .status-normal { color: #00e676; }
+        .status-caution { color: #ffca28; }
+        .status-critical { color: #ff3b3b; font-family: 'Arial Black', sans-serif; }
         
         .ops-reason-note {
             font-size: 0.95rem;
@@ -723,42 +723,93 @@ function applyNWCOpsLevelUI() {
     });
 }
 
+// CWD data cache
+var cwdData = null;
+
+function hazardIconsClock(hazards) {
+    if(!hazards || !hazards.length) return '';
+    return hazards.map(function(h) {
+        var u = h.toUpperCase();
+        if(u.includes('SEVERE') || u.includes('THUNDER') || u.includes('LIGHTNING')) return '⚡';
+        if(u.includes('FIRE') || u.includes('WILDFIRE')) return '🔥';
+        if(u.includes('FLOOD') || u.includes('RAIN')) return '🌧';
+        if(u.includes('WINTER') || u.includes('SNOW') || u.includes('ICE')) return '❄';
+        if(u.includes('TROPICAL') || u.includes('HURRICANE')) return '🌀';
+        return '⚠';
+    }).join('');
+}
+
+function shortStatusClock(s) {
+    if(!s) return '';
+    var u = (s || '').toUpperCase();
+    if(u.includes('CRITICAL') || u.includes('CWD')) return 'CWD';
+    if(u.includes('CAUTION') || u.includes('ECE')) return 'EC';
+    return 'NORMAL';
+}
+
 async function fetchLiveNCOStatus() {
-    let extractedStatus = customFrameConfig.ncoStatus || "NORMAL";
     try {
-        const secureGatewayUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.nco.ncep.noaa.gov/status/cwd/');
-        const response = await fetch(secureGatewayUrl, { signal: AbortSignal.timeout(6000) });
-        
+        const response = await fetch('https://glen104.github.io/nwc-status/status.json?cb=' + Date.now(), 
+            { signal: AbortSignal.timeout(8000) });
         if (response.ok) {
-            const rawJsonData = await response.json();
-            if (rawJsonData && rawJsonData.contents) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(rawJsonData.contents, 'text/html');
-                const statusDivs = doc.querySelectorAll('[class^="col-opt-"], [class*=" col-opt-"]');
-                
-                statusDivs.forEach(div => {
-                    const txt = div.textContent.toUpperCase();
-                    if (txt.includes("CURRENT STATUS:")) {
-                        if (txt.includes("CRITICAL") || txt.includes("CWD")) {
-                            extractedStatus = "Critical Weather Day";
-                        } else if (txt.includes("CAUTION") || txt.includes("ECE")) {
-                            extractedStatus = "Enhanced Caution";
-                        } else if (txt.includes("NORMAL")) {
-                            extractedStatus = "NORMAL";
-                        }
-                    }
-                });
+            const data = await response.json();
+            cwdData = data;
+
+            // Figure out today and tomorrow's day entries
+            const today = new Date();
+            const tomorrow = new Date(today.getTime() + 86400000);
+            const todayDate = today.getDate();
+            const tomorrowDate = tomorrow.getDate();
+
+            const todayDay = (data.days || []).find(d => d.date && d.date.includes(todayDate));
+            const tomorrowDay = (data.days || []).find(d => d.date && d.date.includes(tomorrowDate));
+
+            // Build status display
+            const todayStatus = todayDay ? shortStatusClock(todayDay.status) : shortStatusClock(data.status);
+            const todayIcons = todayDay ? hazardIconsClock(todayDay.hazards) : '';
+            const tomorrowStatus = tomorrowDay ? shortStatusClock(tomorrowDay.status) : 'NORMAL';
+            const tomorrowIcons = tomorrowDay ? hazardIconsClock(tomorrowDay.hazards) : '';
+
+            let displayStatus = todayStatus + (todayIcons ? ' ' + todayIcons : '');
+            let tomorrowDisplay = '';
+            if(tomorrowStatus !== 'NORMAL') {
+                tomorrowDisplay = ' | Tomorrow: ' + tomorrowStatus + (tomorrowIcons ? ' ' + tomorrowIcons : '');
             }
+
+            // Map to badge class
+            let badgeClass = 'status-normal';
+            if(todayStatus === 'CWD') badgeClass = 'status-critical';
+            else if(todayStatus === 'EC') badgeClass = 'status-caution';
+
+            // Tomorrow gets its own color class
+            let tomorrowClass = 'status-normal';
+            if(tomorrowStatus === 'CWD') tomorrowClass = 'status-critical';
+            else if(tomorrowStatus === 'EC') tomorrowClass = 'status-caution';
+
+            // Update both header badges
+            ['nco-status-value', 'nco-status-value-nco'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.className = 'status-value-badge ' + badgeClass;
+                    el.innerHTML = displayStatus + 
+                        (tomorrowDisplay ? '<span class="status-value-badge ' + tomorrowClass + '" style="font-size:1em; margin-left:4px;">' + tomorrowDisplay + '</span>' : '');
+                }
+            });
+
+            // Update modal selector to reflect current status
+            const modalReadoutMenu = document.getElementById('nco-status-selector');
+            if(modalReadoutMenu) {
+                if(todayStatus === 'CWD') modalReadoutMenu.value = 'Critical Weather Day';
+                else if(todayStatus === 'EC') modalReadoutMenu.value = 'Enhanced Caution';
+                else modalReadoutMenu.value = 'NORMAL';
+            }
+
+            customFrameConfig.ncoStatus = data.status;
         }
     } catch (e) {
-        console.log("Live status fetch bottleneck. Utilizing cached baseline framework presets.");
+        console.log("CWD status.json fetch failed, using cached value.", e);
+        applyNCOStatusUI(customFrameConfig.ncoStatus || 'NORMAL');
     }
-    
-    customFrameConfig.ncoStatus = extractedStatus;
-    const modalReadoutMenu = document.getElementById('nco-status-selector');
-    if (modalReadoutMenu) modalReadoutMenu.value = extractedStatus;
-    
-    applyNCOStatusUI(extractedStatus);
 }
 
 function applyNCOStatusUI(statusVal) {
@@ -1203,7 +1254,7 @@ syncOfficialTime();
 setInterval(syncOfficialTime, 600000); 
 
 fetchLiveNCOStatus();
-setInterval(fetchLiveNCOStatus, 300000);
+setInterval(fetchLiveNCOStatus, 1800000); // 30 minutes
 
 applyNWCOpsLevelUI();
 
