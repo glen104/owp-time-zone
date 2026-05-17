@@ -729,14 +729,8 @@ var cwdData = null;
 function hazardIconsClock(hazards) {
     if(!hazards || !hazards.length) return '';
     return hazards.map(function(h) {
-        var u = h.toUpperCase();
-        if(u.includes('SEVERE') || u.includes('THUNDER') || u.includes('LIGHTNING')) return '⚡';
-        if(u.includes('FIRE') || u.includes('WILDFIRE')) return '🔥';
-        if(u.includes('FLOOD') || u.includes('RAIN')) return '🌧';
-        if(u.includes('WINTER') || u.includes('SNOW') || u.includes('ICE')) return '❄';
-        if(u.includes('TROPICAL') || u.includes('HURRICANE')) return '🌀';
-        return '⚠';
-    }).join('');
+        return '<img src="https://www.nco.ncep.noaa.gov/status/css/images/icon-' + h + '.png" style="width:20px; height:20px; vertical-align:middle;" alt="' + h + '">';
+    }).join(' ');
 }
 
 function shortStatusClock(s) {
